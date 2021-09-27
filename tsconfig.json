@@ -12,7 +12,16 @@
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "jsx": "preserve"
+    "jsx": "preserve",
+    "paths": {
+      "@md-modules/*": ["./modules/*"],
+      "@md-shared/*": ["./modules/shared/*"],
+      "@md-utils": ["./modules/shared/utils"],
+      "@md-utils/*": ["./modules/shared/utils/*"],
+      "@md-styles/*": ["./modules/shared/styles/*"],
+      "@md-managers/*": ["./modules/shared/managers/*"],
+      "@md-constants/*": ["./modules/shared/constants/*"]
+    }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
   "exclude": ["node_modules"]
