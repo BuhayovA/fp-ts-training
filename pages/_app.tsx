@@ -1,9 +1,9 @@
-import type { AppProps } from "next/app";
+import type { AppProps } from 'next/app';
 // providers
-import { ThemeProvider } from "styled-components";
+import { ThemeProvider } from 'styled-components';
 // local
-import { theme } from "@md-styles/styled/theme";
-import { GlobalStyles } from "@md-styles/styled/global";
+import { theme } from '../modules/shared/styles/styled/theme';
+import { GlobalStyles } from '../modules/shared/styles/styled/global';
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (

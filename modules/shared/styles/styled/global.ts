@@ -1,5 +1,5 @@
-import { createGlobalStyle } from "styled-components";
-import { colors } from "@md-styles/styled/theme";
+import { createGlobalStyle } from 'styled-components';
+import { colors } from './theme';
 
 export const GlobalStyles = createGlobalStyle`
   * {

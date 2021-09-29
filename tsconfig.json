@@ -8,20 +8,18 @@
     "forceConsistentCasingInFileNames": true,
     "noEmit": true,
     "esModuleInterop": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "strictBindCallApply": true,
+    "strictPropertyInitialization": true,
+    "noImplicitThis": true,
+    "alwaysStrict": true,
     "module": "esnext",
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "jsx": "preserve",
-    "paths": {
-      "@md-modules/*": ["./modules/*"],
-      "@md-shared/*": ["./modules/shared/*"],
-      "@md-utils": ["./modules/shared/utils"],
-      "@md-utils/*": ["./modules/shared/utils/*"],
-      "@md-styles/*": ["./modules/shared/styles/*"],
-      "@md-managers/*": ["./modules/shared/managers/*"],
-      "@md-constants/*": ["./modules/shared/constants/*"]
-    }
+    "jsx": "preserve"
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
   "exclude": ["node_modules"]
