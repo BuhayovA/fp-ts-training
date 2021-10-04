@@ -22,48 +22,46 @@ const MAX_MASS = 60;
 const KEYS: Array<keyof MockData> = ['hair_color', 'skin_color', 'eye_color', 'birth_year', 'gender', 'mass'];
 
 const FPTSFirstPage = () => {
-  const getEntities = () =>
-    pipe(
-      TE.tryCatch(() => getEntityMock(MOCK as NEA.NonEmptyArray<MockData>), E.toError),
+  const getEntities = pipe(
+    TE.tryCatch(() => getEntityMock(MOCK as NEA.NonEmptyArray<MockData>), E.toError),
 
-      TE.chain(
-        flow(
-          NEA.filter((obj) => +obj.mass < MAX_MASS),
-          O.fold(
-            () => TE.left(new Error('Empty arr!')),
-            (e) => TE.right(e)
-          )
+    TE.chain(
+      flow(
+        NEA.filter((obj) => +obj.mass < MAX_MASS),
+        O.fold(
+          () => TE.left(new Error('Empty arr!')),
+          (e) => TE.right(e)
         )
-      ),
+      )
+    ),
 
-      TE.map(
-        NEA.map((obj) =>
-          pipe(
-            KEYS,
-            A.reduce({} as MockData, (i, key) => ({ ...i, [key]: obj[key] })),
+    TE.map(
+      NEA.map((obj) =>
+        pipe(
+          KEYS,
+          A.reduce({} as MockData, (i, key) => ({ ...i, [key]: obj[key] })),
 
-            Object.keys,
-            A.reduce({} as MockData, (i, key) =>
-              pipe(
-                obj[key as keyof MockData] === 'n/a',
-
-                B.fold(
-                  () => ({ ...i, [key]: obj[key as keyof MockData] }),
-                  () => ({ ...i, [key]: 'UNKNOWN' })
-                )
+          Object.keys,
+          A.reduce({} as MockData, (i, key) =>
+            pipe(
+              obj[key as keyof MockData] === 'n/a',
+              B.fold(
+                () => ({ ...i, [key]: obj[key as keyof MockData] }),
+                () => ({ ...i, [key]: 'UNKNOWN' })
               )
             )
           )
         )
-      ),
-
-      TE.fold(
-        // eslint-disable-next-line no-console
-        (e) => T.fromIO(() => console.log(e)),
-        // eslint-disable-next-line no-console
-        (e) => T.fromIO(() => console.log(e))
       )
-    )();
+    ),
+
+    TE.fold(
+      // eslint-disable-next-line no-console
+      (e) => T.fromIO(() => console.log(e)),
+      // eslint-disable-next-line no-console
+      (e) => T.fromIO(() => console.log(e))
+    )
+  );
 
   // eslint-disable-next-line no-console
   getEntities().then((res) => console.log('[response]: ', res));
