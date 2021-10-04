@@ -192,45 +192,45 @@ export const MOCK: MockData[] = [
 ];
 
 export const ioTx = `
-const getEntities = () =>
-    pipe(
-      TE.tryCatch(() => getEntityMock(MOCK as NEA.NonEmptyArray<MockData>), E.toError),
+const FPTSFirstPage = () => {
+  const getEntities = pipe(
+    TE.tryCatch(() => getEntityMock(MOCK as NEA.NonEmptyArray<MockData>), E.toError),
 
-      TE.chain(
-        flow(
-          NEA.filter((obj) => +obj.mass < MAX_MASS),
-          O.fold(
-            () => TE.left(new Error('Empty arr!')),
-            (e) => TE.right(e)
-          )
+    TE.chain(
+      flow(
+        NEA.filter((obj) => +obj.mass < MAX_MASS),
+        O.fold(
+          () => TE.left(new Error('Empty arr!')),
+          (e) => TE.right(e)
         )
-      ),
-
-      TE.map(
-        NEA.map((obj) =>
-          pipe(
-            Object.keys(obj) as Array<keyof MockData>,
-            A.reduce({} as MockData, (i, key) =>
-              pipe(
-                obj[key] === 'n/a',
-                B.fold(
-                  () => ({ ...i, [key]: obj[key] }),
-                  () => ({ ...i, [key]: 'UNKNOWN' })
-                )
-              )
-            ),
-
-            () => KEYS,
-            A.reduce({} as MockData, (i, key) => ({ ...i, [key]: obj[key] }))
-          )
-        )
-      ),
-
-      TE.fold(
-        // eslint-disable-next-line no-console
-        (e) => T.fromIO(() => console.log(e)),
-        // eslint-disable-next-line no-console
-        (e) => T.fromIO(() => console.log(e))
       )
-    )();
+    ),
+
+    TE.map(
+      NEA.map((obj) =>
+        pipe(
+          KEYS,
+          A.reduce({} as MockData, (i, key) => ({ ...i, [key]: obj[key] })),
+
+          Object.entries,
+          A.reduce({} as MockData, (i, key) =>
+            pipe(
+              key[0] === 'n/a',
+              B.fold(
+                () => ({ ...i, [key]: obj[key as keyof MockData] }),
+                () => ({ ...i, [key]: 'UNKNOWN' })
+              )
+            )
+          )
+        )
+      )
+    ),
+
+    TE.fold(
+      // eslint-disable-next-line no-console
+      (e) => T.fromIO(() => console.log(e)),
+      // eslint-disable-next-line no-console
+      (e) => T.fromIO(() => console.log(e))
+    )
+  );
 `;
