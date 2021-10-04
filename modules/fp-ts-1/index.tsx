@@ -39,19 +39,20 @@ const FPTSFirstPage = () => {
       TE.map(
         NEA.map((obj) =>
           pipe(
-            Object.keys(obj) as Array<keyof MockData>,
+            KEYS,
+            A.reduce({} as MockData, (i, key) => ({ ...i, [key]: obj[key] })),
+
+            Object.keys,
             A.reduce({} as MockData, (i, key) =>
               pipe(
-                obj[key] === 'n/a',
+                obj[key as keyof MockData] === 'n/a',
+
                 B.fold(
-                  () => ({ ...i, [key]: obj[key] }),
+                  () => ({ ...i, [key]: obj[key as keyof MockData] }),
                   () => ({ ...i, [key]: 'UNKNOWN' })
                 )
               )
-            ),
-
-            () => KEYS,
-            A.reduce({} as MockData, (i, key) => ({ ...i, [key]: obj[key] }))
+            )
           )
         )
       ),
@@ -65,11 +66,10 @@ const FPTSFirstPage = () => {
     )();
 
   // eslint-disable-next-line no-console
-  getEntities();
+  getEntities().then((res) => console.log('[response]: ', res));
 
   return (
     <div>
-      Task #1
       <CodeBlock label='Handling an async operation' codeTx={ioTx} />
     </div>
   );

@@ -11,8 +11,7 @@
     "format:json": "prettier --write '**/*.json'",
     "format:md": "prettier --write '**/*.md'",
     "format:ts": "prettier --write '**/*.ts{,x}'",
-    "lint": "eslint . --ext ts --ext tsx --ext js",
-    "postinstall": "husky install"
+    "lint": "eslint . --ext ts --ext tsx --ext js"
   },
   "lint-staged": {
     "*.@(ts|tsx)": [
@@ -23,7 +22,6 @@
   "dependencies": {
     "@apollo/client": "^3.3.15",
     "@hookform/resolvers": "^2.4.0",
-    "@types/react-select": "^4.0.15",
     "axios": "^0.21.1",
     "fp-ts": "^2.11.4",
     "graphql": "^15.5.0",
@@ -36,7 +34,6 @@
     "react-dom": "17.0.2",
     "react-hook-form": "^7.3.5",
     "react-redux": "^7.2.4",
-    "react-select": "^4.3.0",
     "react-syntax-highlighter": "^15.4.4",
     "redux": "^4.1.0",
     "redux-thunk": "^2.3.0",
