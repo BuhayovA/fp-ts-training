@@ -12,7 +12,9 @@ import * as TE from 'fp-ts/lib/TaskEither';
 // helpers
 import { getEntityMock } from './helpers';
 // constants
-import { MOCK, MockData } from './constants';
+import { ioTx, MOCK, MockData } from './constants';
+// components
+import { CodeBlock } from '@md-shared/components/code-block';
 
 // constants
 const MAX_MASS = 60;
@@ -65,7 +67,12 @@ const FPTSFirstPage = () => {
   // eslint-disable-next-line no-console
   getEntities();
 
-  return <div>Task #1</div>;
+  return (
+    <div>
+      Task #1
+      <CodeBlock label='Handling an async operation' codeTx={ioTx} />
+    </div>
+  );
 };
 
 export default FPTSFirstPage;

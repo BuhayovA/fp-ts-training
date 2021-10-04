@@ -1,6 +1,6 @@
 import React from 'react';
-import FPTSFirstPage from '../../modules/fp-ts-1';
-import { MainLayout } from '../../modules/shared/layouts/main';
+import FPTSFirstPage from '@md-modules/fp-ts-1';
+import { MainLayout } from '@md-modules/shared/layouts/main';
 
 const FPTSFirst = () => {
   return (

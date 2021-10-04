@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "baseUrl": ".",
     "target": "es5",
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
@@ -8,18 +9,21 @@
     "forceConsistentCasingInFileNames": true,
     "noEmit": true,
     "esModuleInterop": true,
-    "noImplicitAny": true,
-    "strictNullChecks": true,
-    "strictFunctionTypes": true,
-    "strictBindCallApply": true,
-    "strictPropertyInitialization": true,
-    "noImplicitThis": true,
-    "alwaysStrict": true,
     "module": "esnext",
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "jsx": "preserve"
+    "jsx": "preserve",
+    "paths": {
+      "@md-modules/*": ["./modules/*"],
+      "@md-shared/*": ["./modules/shared/*"],
+      "@md-styles/*": ["./modules/shared/styles/*"],
+      "@md-utils/*": ["./modules/shared/utils/*"],
+      "@md-utils": ["./modules/shared/utils"],
+      "@md-managers/*": ["./modules/shared/managers/*"],
+      "@md-constants/*": ["./modules/shared/constants/*"],
+      "@md-store/*": ["./store/*"]
+    }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
   "exclude": ["node_modules"]

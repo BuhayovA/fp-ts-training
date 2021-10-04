@@ -1,12 +1,8 @@
-import HomePage from '../modules/home';
-import { MainLayout } from '../modules/shared/layouts/main';
+import * as React from 'react';
+import { MainLayout } from '@md-modules/shared/layouts/main';
 
 const Home = () => {
-  return (
-    <MainLayout>
-      <HomePage />
-    </MainLayout>
-  );
+  return <MainLayout></MainLayout>;
 };
 
 export default Home;
