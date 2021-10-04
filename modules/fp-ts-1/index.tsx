@@ -41,10 +41,10 @@ const FPTSFirstPage = () => {
           KEYS,
           A.reduce({} as MockData, (i, key) => ({ ...i, [key]: obj[key] })),
 
-          Object.entries,
+          Object.keys,
           A.reduce({} as MockData, (i, key) =>
             pipe(
-              key[0] === 'n/a',
+              obj[key as keyof MockData] === 'n/a',
               B.fold(
                 () => ({ ...i, [key]: obj[key as keyof MockData] }),
                 () => ({ ...i, [key]: 'UNKNOWN' })
