@@ -192,17 +192,20 @@ export const MOCK: MockData[] = [
 ];
 
 export const ioTx = `
-const FPTSFirstPage = () => {
-  const getEntities = pipe(
-    TE.tryCatch(() => getEntityMock(MOCK as NEA.NonEmptyArray<MockData>), E.toError),
+const getEntities = pipe(
+    TE.tryCatch(() => getEntityMock(MOCK), E.toError),
 
     TE.chain(
       flow(
-        NEA.filter((obj) => +obj.mass < MAX_MASS),
-        O.fold(
-          () => TE.left(new Error('Empty arr!')),
-          (e) => TE.right(e)
-        )
+        NEA.fromArray,
+        TE.fromOption(() => new Error('Empty arr!'))
+      )
+    ),
+
+    TE.chain(
+      flow(
+        NEA.filter<MockData>((obj) => +obj.mass < MAX_MASS),
+        TE.fromOption(() => new Error('Empty arr!'))
       )
     ),
 
@@ -212,25 +215,19 @@ const FPTSFirstPage = () => {
           KEYS,
           A.reduce({} as MockData, (i, key) => ({ ...i, [key]: obj[key] })),
 
-          Object.entries,
-          A.reduce({} as MockData, (i, key) =>
+          R.keys,
+          // R.modifyAt(key, (key) => (key === 'n/a' ? 'UNKNOWN' : key)),
+          A.reduce<keyof MockData, MockData>({} as MockData, (i, key) =>
             pipe(
-              key[0] === 'n/a',
+              obj[key] === 'n/a',
               B.fold(
-                () => ({ ...i, [key]: obj[key as keyof MockData] }),
+                () => ({ ...i, [key]: obj[key] }),
                 () => ({ ...i, [key]: 'UNKNOWN' })
               )
             )
           )
         )
       )
-    ),
-
-    TE.fold(
-      // eslint-disable-next-line no-console
-      (e) => T.fromIO(() => console.log(e)),
-      // eslint-disable-next-line no-console
-      (e) => T.fromIO(() => console.log(e))
     )
   );
 `;
