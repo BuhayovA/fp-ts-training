@@ -213,17 +213,10 @@ const getEntities = pipe(
       NEA.map((obj) =>
         pipe(
           KEYS,
-          A.reduce({} as MockData, (i, key) => ({ ...i, [key]: obj[key] })),
-
-          R.keys,
-          // R.modifyAt(key, (key) => (key === 'n/a' ? 'UNKNOWN' : key)),
-          A.reduce<keyof MockData, MockData>({} as MockData, (i, key) =>
+          A.reduce({} as MockData, (i, key) =>
             pipe(
-              obj[key] === 'n/a',
-              B.fold(
-                () => ({ ...i, [key]: obj[key] }),
-                () => ({ ...i, [key]: 'UNKNOWN' })
-              )
+              { ...i, [key]: obj[key] },
+              R.map((val) => (val === 'n/a' ? 'UNKNOWN' : val))
             )
           )
         )

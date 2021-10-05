@@ -1,7 +1,7 @@
 import React from 'react';
 // utils
-import * as T from 'fp-ts/lib/Task';
 import * as A from 'fp-ts/lib/Array';
+import * as O from 'fp-ts/lib/Option';
 import * as E from 'fp-ts/lib/Either';
 import * as R from 'fp-ts/lib/Record';
 import * as B from 'fp-ts/lib/boolean';
@@ -22,6 +22,8 @@ const MAX_MASS = 60;
 const KEYS: Array<keyof MockData> = ['hair_color', 'skin_color', 'eye_color', 'birth_year', 'gender', 'mass'];
 
 const FPTSFirstPage = () => {
+  // eslint-disable-next-line no-console
+
   const getEntities = pipe(
     TE.tryCatch(() => getEntityMock(MOCK), E.toError),
 
@@ -43,17 +45,10 @@ const FPTSFirstPage = () => {
       NEA.map((obj) =>
         pipe(
           KEYS,
-          A.reduce({} as MockData, (i, key) => ({ ...i, [key]: obj[key] })),
-
-          R.keys,
-          // R.modifyAt(key, (key) => (key === 'n/a' ? 'UNKNOWN' : key)),
-          A.reduce<keyof MockData, MockData>({} as MockData, (i, key) =>
+          A.reduce({} as MockData, (i, key) =>
             pipe(
-              obj[key] === 'n/a',
-              B.fold(
-                () => ({ ...i, [key]: obj[key] }),
-                () => ({ ...i, [key]: 'UNKNOWN' })
-              )
+              { ...i, [key]: obj[key] },
+              R.map((val) => (val === 'n/a' ? 'UNKNOWN' : val))
             )
           )
         )
