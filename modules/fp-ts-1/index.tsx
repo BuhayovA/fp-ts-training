@@ -1,10 +1,8 @@
 import React from 'react';
 // utils
 import * as A from 'fp-ts/lib/Array';
-import * as O from 'fp-ts/lib/Option';
 import * as E from 'fp-ts/lib/Either';
 import * as R from 'fp-ts/lib/Record';
-import * as B from 'fp-ts/lib/boolean';
 import { pipe } from 'fp-ts/lib/pipeable';
 import { flow } from 'fp-ts/lib/function';
 import * as NEA from 'fp-ts/NonEmptyArray';
@@ -22,8 +20,6 @@ const MAX_MASS = 60;
 const KEYS: Array<keyof MockData> = ['hair_color', 'skin_color', 'eye_color', 'birth_year', 'gender', 'mass'];
 
 const FPTSFirstPage = () => {
-  // eslint-disable-next-line no-console
-
   const getEntities = pipe(
     TE.tryCatch(() => getEntityMock(MOCK), E.toError),
 
