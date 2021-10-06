@@ -5,7 +5,7 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { dracula } from 'react-syntax-highlighter/dist/cjs/styles/prism';
 
 const Subtitle = styled.h4`
-  color: #bdc75c;
+  color: ${({ theme }) => theme.colors.gray400};
 `;
 
 const ContentBlock = styled.div`

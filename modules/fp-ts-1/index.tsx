@@ -15,6 +15,8 @@ import { MOCK, MockData, input, solution, KEYS, MAX_MASS } from '@md-modules/fp-
 import { CodeBlock } from '@md-shared/components/code-block';
 
 const FPTSFirstPage = () => {
+  const [response, setResponse] = React.useState<E.Either<Error, NEA.NonEmptyArray<MockData>>>([]);
+
   const getEntities = pipe(
     TE.tryCatch(() => getEntityMock(MOCK), E.toError),
 
@@ -48,12 +50,18 @@ const FPTSFirstPage = () => {
   );
 
   // eslint-disable-next-line no-console
-  getEntities().then((res) => console.log('[response]: ', res));
+  getEntities().then((res) => {
+    // eslint-disable-next-line no-console
+    console.log('[response]: ', res);
+
+    setResponse(res);
+  });
 
   return (
     <div>
       <CodeBlock label='Handling an async operation: [Input]' codeTx={input} />
       <CodeBlock label='Handling an async operation: [Solution]' codeTx={solution} />
+      <CodeBlock label='Handling an async operation: [Response]' codeTx={JSON.stringify(response, null, ' ')} />
     </div>
   );
 };
