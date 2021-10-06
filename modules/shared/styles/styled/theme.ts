@@ -9,6 +9,7 @@ export const colors = {
   blue150: '#D6FAFF',
   blue300: '#02a0fc',
   blue400: '#4339f2',
+  blue900: '#282A36',
   // orange
   orange100: '#ffe5d3',
   orange400: '#FF8540',

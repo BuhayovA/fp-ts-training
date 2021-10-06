@@ -6,6 +6,7 @@ export const ContentWrapper = styled.div`
   transition: margin-left 0.5s ease;
   display: flex;
   flex-direction: column;
+  margin-top: 80px;
 
   @media (max-width: 768px) {
     margin-left: 0;
@@ -20,6 +21,7 @@ export const Wrapper = styled.div`
 export const ScreenTitle = styled.p`
   font-size: 32px;
   font-weight: 500;
+
   color: ${({ theme }) => theme.colors.gray400};
 
   @media (max-width: 768px) {
