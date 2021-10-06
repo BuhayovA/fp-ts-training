@@ -15,7 +15,7 @@ import { MOCK, MockData, input, solution, KEYS, MAX_MASS } from '@md-modules/fp-
 import { CodeBlock } from '@md-shared/components/code-block';
 
 const FPTSFirstPage = () => {
-  const [response, setResponse] = React.useState<E.Either<Error, NEA.NonEmptyArray<MockData>>>([]);
+  const [response, setResponse] = React.useState<E.Either<Error, NEA.NonEmptyArray<MockData>> | string>('');
 
   const getEntities = pipe(
     TE.tryCatch(() => getEntityMock(MOCK), E.toError),
