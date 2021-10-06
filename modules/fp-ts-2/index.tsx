@@ -6,7 +6,6 @@ import * as E from 'fp-ts/lib/Either';
 import * as R from 'fp-ts/lib/Record';
 import { pipe } from 'fp-ts/lib/pipeable';
 import { Do } from 'fp-ts-contrib/lib/Do';
-import * as NEA from 'fp-ts/NonEmptyArray';
 import * as TE from 'fp-ts/lib/TaskEither';
 // constants
 import { Person, solution, Starship, KEYS, input } from '@md-modules/fp-ts-2/constants';
