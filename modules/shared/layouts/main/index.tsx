@@ -9,9 +9,17 @@ interface Props {
 }
 
 const MainLayout: React.FC<Props> = ({ children, screenTitle }) => {
+  const [expanded, setExpanded] = React.useState(false);
+
+  const toggleMenu = () => setExpanded((prevState) => !prevState);
+
+  // React.useEffect(() => {
+  //   localStorage.setItem('expanded', localStorage.getItem('expanded') === null ? 'close' : expanded ? 'open' : 'close');
+  // }, [expanded]);
+
   return (
-    <Wrapper>
-      <Header />
+    <Wrapper expanded={expanded}>
+      <Header expanded={expanded} toggleMenu={toggleMenu} />
 
       <ContentWrapper>
         {screenTitle && <ScreenTitle>{screenTitle}</ScreenTitle>}

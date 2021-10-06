@@ -8,6 +8,7 @@ export const colors = {
   // blue
   blue150: '#D6FAFF',
   blue300: '#02a0fc',
+  blue350: '#468DFF',
   blue400: '#4339f2',
   blue900: '#282A36',
   // orange
@@ -33,6 +34,7 @@ export const colors = {
   // red
   red100: '#ffe5d3',
   red200: '#FFCCCC',
+  red250: '#fc7b75',
   red300: '#eb5757',
   red400: '#ff3a29',
   // pink

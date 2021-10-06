@@ -11,8 +11,7 @@ export const GlobalStyles = createGlobalStyle`
   }
   
   html {
-    overflow-y: scroll;
-    overflow-y: overlay;
+    
   }
   
   body {
