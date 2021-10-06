@@ -9,7 +9,7 @@ import { Do } from 'fp-ts-contrib/lib/Do';
 import * as NEA from 'fp-ts/NonEmptyArray';
 import * as TE from 'fp-ts/lib/TaskEither';
 // constants
-import { Person, solution, Starship, KEYS } from '@md-modules/fp-ts-2/constants';
+import { Person, solution, Starship, KEYS, input } from '@md-modules/fp-ts-2/constants';
 // components
 import { CodeBlock } from '@md-shared/components/code-block';
 
@@ -25,43 +25,30 @@ const FPTSSecondPage = () => {
     )
     .bindL('people', ({ peopleRes }) => TE.tryCatch<Error, Person[]>(() => peopleRes.json(), E.toError))
     .bindL('starships', ({ starshipsRes }) => TE.tryCatch<Error, Starship[]>(() => starshipsRes.json(), E.toError))
-    .bindL('NEAPeople', ({ people }) =>
+    .bindL('peopleWithHisStarship', ({ people, starships }) =>
       pipe(
         people,
-        NEA.fromArray,
-        TE.fromOption(() => new Error('Empty arr!'))
-      )
-    )
-    .bindL('NEAStarships', ({ starships }) =>
-      pipe(
-        starships,
-        NEA.fromArray,
-        TE.fromOption(() => new Error('Empty arr!'))
-      )
-    )
-    .bindL('sorted', ({ NEAPeople, NEAStarships }) =>
-      pipe(
-        NEAPeople,
         A.map((obj) =>
           pipe(
             KEYS,
             A.reduce({} as Person, (i, key) => ({ ...i, [key]: obj[key] })),
-            R.modifyAt<Person>('starship', (val) => NEAStarships.find((i) => i.starship === val)),
-            O.getOrElse(() => obj)
+            R.modifyAt<Starship | string>('starship', (val) => starships.find((i) => i.starship === val) || val),
+            O.getOrElse<Record<keyof Person, string | Starship>>(() => obj)
           )
         ),
         (e) => e,
         TE.right
       )
     )
-    .return(({ sorted }) => sorted);
+    .return(({ peopleWithHisStarship }) => peopleWithHisStarship);
 
   // eslint-disable-next-line no-console
   getSortEntities().then((res) => console.log(res));
 
   return (
     <div>
-      <CodeBlock label='Handling an async operation: [Solution]' codeTx={solution} />
+      <CodeBlock label='Handling an async operation with "Do" method: [Input on JSON format]' codeTx={input} />
+      <CodeBlock label='Handling an async operation with "Do" method: [Solution]' codeTx={solution} />
     </div>
   );
 };

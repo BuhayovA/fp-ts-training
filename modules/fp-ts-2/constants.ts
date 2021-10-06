@@ -58,34 +58,66 @@ export const solution = `
     )
     .bindL('people', ({ peopleRes }) => TE.tryCatch<Error, Person[]>(() => peopleRes.json(), E.toError))
     .bindL('starships', ({ starshipsRes }) => TE.tryCatch<Error, Starship[]>(() => starshipsRes.json(), E.toError))
-    .bindL('NEAPeople', ({ people }) =>
+    .bindL('peopleWithHisStarship', ({ people, starships }) =>
       pipe(
         people,
-        NEA.fromArray,
-        TE.fromOption(() => new Error('Empty arr!'))
-      )
-    )
-    .bindL('NEAStarships', ({ starships }) =>
-      pipe(
-        starships,
-        NEA.fromArray,
-        TE.fromOption(() => new Error('Empty arr!'))
-      )
-    )
-    .bindL('sorted', ({ NEAPeople, NEAStarships }) =>
-      pipe(
-        NEAPeople,
         A.map((obj) =>
           pipe(
             KEYS,
             A.reduce({} as Person, (i, key) => ({ ...i, [key]: obj[key] })),
-            R.modifyAt('starship', (val) => NEAStarships.find((i) => i.starship === val)),
-            O.getOrElse<Record<keyof Person, unknown>>(() => obj)
+            R.modifyAt<Starship | string>('starship', (val) => starships.find((i) => i.starship === val) || val),
+            O.getOrElse<Record<keyof Person, string | Starship>>(() => obj)
           )
         ),
         (e) => e,
         TE.right
       )
     )
-    .return(({ sorted }) => sorted);
+    .return(({ peopleWithHisStarship }) => peopleWithHisStarship);
 `;
+
+export const input = `{
+  people: [
+    {
+      name: 'Luke Skywalker',
+      height: '172',
+      mass: '77',
+      hair_color: 'blond',
+      skin_color: 'fair',
+      eye_color: 'blue',
+      birth_year: '19BBY',
+      gender: 'male',
+      starship: '6676a3e1-8cf8-4bee-9205-d27b9a364bc2',
+      homeworld: 'https://swapi.dev/api/planets/1/',
+      created: '2014-12-09T13:50:51.644000Z',
+      edited: '2014-12-20T21:17:56.891000Z',
+      url: 'https://swapi.dev/api/people/1/'
+    },
+    
+    and more...
+  ],
+
+  starships: [
+    {
+      name: 'CR90 corvette',
+      model: 'CR90 corvette',
+      manufacturer: 'Corellian Engineering Corporation',
+      cost_in_credits: '3500000',
+      length: '150',
+      max_atmosphering_speed: '950',
+      crew: '30-165',
+      passengers: '600',
+      cargo_capacity: '3000000',
+      consumables: '1 year',
+      hyperdrive_rating: '2.0',
+      MGLT: '60',
+      starship: '6676a3e1-8cf8-4bee-9205-d27b9a364bc2',
+      starship_class: 'corvette',
+      created: '2014-12-10T14:20:33.369000Z',
+      edited: '2014-12-20T21:23:49.867000Z',
+      url: 'https://swapi.dev/api/starships/2/'
+    },
+    
+    and more...
+  ]
+}`;
