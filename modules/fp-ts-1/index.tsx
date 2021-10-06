@@ -8,16 +8,11 @@ import { flow } from 'fp-ts/lib/function';
 import * as NEA from 'fp-ts/NonEmptyArray';
 import * as TE from 'fp-ts/lib/TaskEither';
 // helpers
-import { getEntityMock } from './helpers';
+import { getEntityMock } from '@md-utils/mock';
 // constants
-import { ioTx, MOCK, MockData } from './constants';
+import { MOCK, MockData, input, solution, KEYS, MAX_MASS } from '@md-modules/fp-ts-1/constants';
 // components
 import { CodeBlock } from '@md-shared/components/code-block';
-
-// constants
-const MAX_MASS = 60;
-
-const KEYS: Array<keyof MockData> = ['hair_color', 'skin_color', 'eye_color', 'birth_year', 'gender', 'mass'];
 
 const FPTSFirstPage = () => {
   const getEntities = pipe(
@@ -57,7 +52,8 @@ const FPTSFirstPage = () => {
 
   return (
     <div>
-      <CodeBlock label='Handling an async operation' codeTx={ioTx} />
+      <CodeBlock label='Handling an async operation: [Input]' codeTx={input} />
+      <CodeBlock label='Handling an async operation: [Solution]' codeTx={solution} />
     </div>
   );
 };
