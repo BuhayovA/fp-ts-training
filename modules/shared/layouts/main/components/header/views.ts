@@ -15,7 +15,7 @@ export const Wrapper = styled.div<{ isScroll: boolean }>`
   box-shadow: ${({ isScroll }) => isScroll && 'rgba(0, 0, 0, 0.35) 0px 5px 15px'};
 
   @media (max-width: 768px) {
-    padding: ${({ isScroll }) => (isScroll ? '15px 15px' : '20px 15px')};
+    padding: ${({ isScroll }) => (isScroll ? '15px 20px' : '20px 20px')};
   }
 `;
 
@@ -37,4 +37,8 @@ export const Logo = styled.img`
   cursor: pointer;
   width: 20px;
   height: 20px;
+
+  @media (max-width: 768px) {
+    margin: 0 20px 0 0;
+  }
 `;
