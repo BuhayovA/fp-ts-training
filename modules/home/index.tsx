@@ -1,7 +1,11 @@
 import React from 'react';
 
 const HomePage = () => {
-  return <div></div>;
+  return (
+    <div>
+      A community examples for <a href='https://github.com/gcanti/fp-ts'>fp-ts</a>.
+    </div>
+  );
 };
 
 export default HomePage;

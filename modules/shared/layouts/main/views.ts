@@ -1,16 +1,15 @@
 import styled from 'styled-components';
 
 export const ContentWrapper = styled.div`
-  min-height: 100vh;
-  padding: 0 40px 40px;
+  min-height: 100%;
+  padding: 80px 40px 40px;
   transition: margin-left 0.5s ease;
   display: flex;
   flex-direction: column;
-  margin-top: 80px;
 
   @media (max-width: 768px) {
     margin-left: 0;
-    padding: 0 20px 20px;
+    padding: 60px 20px 20px;
   }
 `;
 

@@ -10,10 +10,6 @@ export const GlobalStyles = createGlobalStyle`
     height: 100%;
   }
   
-  html {
-    
-  }
-  
   body {
     font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
     Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;

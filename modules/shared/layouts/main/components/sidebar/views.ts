@@ -15,6 +15,7 @@ export const Wrapper = styled.div<{ isScroll: boolean }>`
   box-shadow: ${({ isScroll }) => isScroll && 'rgba(0, 0, 0, 0.35) 0px 5px 15px'};
 
   @media (max-width: 768px) {
+    justify-content: center;
     padding: ${({ isScroll }) => (isScroll ? '15px 20px' : '20px 20px')};
   }
 `;
@@ -42,7 +43,7 @@ export const Logo = styled.img`
   }
 `;
 
-export const MenuBtn = styled.div<{ isActive: boolean; isScroll: boolean }>`
+export const BurgerWrapper = styled.div<{ isActive: boolean; isScroll: boolean }>`
   width: 30px;
   height: 20px;
   cursor: pointer;

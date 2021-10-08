@@ -2,7 +2,7 @@ import React from 'react';
 // hooks
 import { useRouter } from 'next/router';
 // components
-import Menu from '@md-shared/layouts/main/components/header/components/menu';
+import MenuItems from '@md-shared/layouts/main/components/sidebar/components/menu-items';
 // views
 import {
   Logo,
@@ -11,26 +11,20 @@ import {
   Line2,
   Line3,
   Line1,
-  MenuBtn
-} from '@md-shared/layouts/main/components/header/views';
+  BurgerWrapper
+} from '@md-shared/layouts/main/components/sidebar/views';
 
 interface Props {
   expanded: boolean;
   toggleMenu: () => void;
 }
 
-const Header: React.FC<Props> = ({ toggleMenu, expanded }) => {
+const SideBar: React.FC<Props> = ({ toggleMenu, expanded }) => {
   const { push } = useRouter();
   const [isScroll, setIsScroll] = React.useState(false);
 
   React.useEffect(() => {
-    const scrollHandler = () => {
-      if (window.scrollY > 20) {
-        setIsScroll(true);
-      } else {
-        setIsScroll(false);
-      }
-    };
+    const scrollHandler = () => setIsScroll(window.scrollY > 20);
 
     window.addEventListener('scroll', scrollHandler);
 
@@ -52,15 +46,15 @@ const Header: React.FC<Props> = ({ toggleMenu, expanded }) => {
         FP-EXAMPLES
       </ScreenTitle>
 
-      <MenuBtn isScroll={isScroll} onClick={toggleMenu} isActive={expanded}>
-        <Line1 isActive={expanded}></Line1>
-        <Line2 isActive={expanded}></Line2>
-        <Line3 isActive={expanded}></Line3>
-      </MenuBtn>
+      <BurgerWrapper isScroll={isScroll} onClick={toggleMenu} isActive={expanded}>
+        <Line1 isActive={expanded} />
+        <Line2 isActive={expanded} />
+        <Line3 isActive={expanded} />
+      </BurgerWrapper>
 
-      <Menu isScroll={isScroll} expanded={expanded} />
+      <MenuItems isScroll={isScroll} expanded={expanded} />
     </Wrapper>
   );
 };
 
-export default Header;
+export default SideBar;

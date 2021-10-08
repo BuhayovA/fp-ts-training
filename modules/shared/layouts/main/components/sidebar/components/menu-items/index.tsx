@@ -1,23 +1,24 @@
 import React from 'react';
+// hooks
+import { useRouter } from 'next/router';
 // constants
-import { menuItems } from '@md-shared/layouts/main/components/header/constants';
+import { menuItems } from '@md-shared/layouts/main/components/sidebar/constants';
 // components
-import { MenuItem } from '@md-shared/layouts/main/components/header/components/menu/menu-items/components';
+import { MenuItem } from '@md-shared/components/menu-item';
 // views
 import {
   Wrapper,
   ItemsWrapper,
   IWrapper,
   Scroll
-} from '@md-shared/layouts/main/components/header/components/menu/view';
-import { useRouter } from 'next/router';
+} from '@md-shared/layouts/main/components/sidebar/components/menu-items/view';
 
 interface Props {
   expanded: boolean;
   isScroll: boolean;
 }
 
-const Menu: React.FC<Props> = ({ expanded, isScroll }) => {
+const MenuItems: React.FC<Props> = ({ expanded, isScroll }) => {
   const { pathname } = useRouter();
 
   const isRouteActive = (route: string) => {
@@ -34,16 +35,14 @@ const Menu: React.FC<Props> = ({ expanded, isScroll }) => {
   return (
     <Wrapper isScroll={isScroll} expanded={expanded}>
       <ItemsWrapper expanded={expanded}>
-        <Scroll>
-          {menuItems.map(({ l, h }) => (
-            <IWrapper isScroll={isScroll} key={l}>
-              <MenuItem active={isRouteActive(h)} key={l} href={h} label={l} />
-            </IWrapper>
-          ))}
-        </Scroll>
+        {menuItems.map(({ l, h }) => (
+          <IWrapper isScroll={isScroll} key={l}>
+            <MenuItem active={isRouteActive(h)} key={l} href={h} label={l} />
+          </IWrapper>
+        ))}
       </ItemsWrapper>
     </Wrapper>
   );
 };
 
-export default Menu;
+export default MenuItems;

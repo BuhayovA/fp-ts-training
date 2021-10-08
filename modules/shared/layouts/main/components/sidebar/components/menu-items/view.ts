@@ -23,22 +23,9 @@ export const ItemsWrapper = styled.div<{ expanded: boolean }>`
   overflow: auto;
   transition: all 0.5s ease;
 
-  display: ${({ expanded }) => (expanded ? 'block' : 'none')};
-`;
-
-export const IWrapper = styled.div<{ isScroll: boolean }>`
-  width: 100%;
-  padding: 8px 15px;
-  display: block;
-  border-bottom: 1px solid ${({ theme, isScroll }) => (isScroll ? theme.colors.blue350 : theme.colors.red250)};
-`;
-
-export const Scroll = styled.div`
-  display: flex;
   flex-direction: column;
   height: 100%;
   overflow-x: hidden;
-  overflow-y: auto;
   position: absolute;
   width: 100%;
   z-index: 999;
@@ -49,4 +36,13 @@ export const Scroll = styled.div`
   &::-webkit-scrollbar {
     display: none;
   }
+
+  display: ${({ expanded }) => (expanded ? 'flex' : 'none')};
+`;
+
+export const IWrapper = styled.div<{ isScroll: boolean }>`
+  width: 100%;
+  padding: 8px 15px;
+  display: block;
+  border-bottom: 1px solid ${({ theme, isScroll }) => (isScroll ? theme.colors.blue350 : theme.colors.red250)};
 `;
