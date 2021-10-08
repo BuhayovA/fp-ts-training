@@ -1,20 +1,20 @@
 import styled from 'styled-components';
 
-export const MenuI = styled.div<{ active: boolean }>`
+export const MenuI = styled.div<{ active: boolean; color?: string }>`
   position: relative;
-  margin: 0px 25px;
+  margin: 0px 20px;
   transition: 1s;
   font-size: 14px;
   font-weight: 500;
-
-  color: ${({ theme }) => theme.colors.gray400};
 
   a {
     display: flex;
     text-decoration: none;
     transition: opacity 0.3s ease-in-out;
 
-    color: ${({ theme, active }) => (active ? theme.colors.gray200 : theme.colors.white)};
+    color: ${({ theme, color }) => color || theme.colors.white};
+
+    opacity: ${({ active }) => active && 0.7};
 
     &:hover {
       opacity: 0.5;

@@ -9,15 +9,20 @@ export const Wrapper = styled.div<{ isScroll: boolean }>`
   z-index: 999;
   display: flex;
   align-items: center;
+  justify-content: space-between;
 
-  padding: ${({ isScroll }) => (isScroll ? '15px 0px' : '30px 0px')};
+  padding: ${({ isScroll }) => (isScroll ? '15px 20px' : '30px 20px')};
   background-color: ${({ isScroll }) => isScroll && 'rgb(40, 42, 54, 0.96)'};
   box-shadow: ${({ isScroll }) => isScroll && 'rgba(0, 0, 0, 0.35) 0px 5px 15px'};
 
   @media (max-width: 768px) {
-    justify-content: center;
     padding: ${({ isScroll }) => (isScroll ? '15px 20px' : '20px 20px')};
   }
+`;
+
+export const LeftSide = styled.div`
+  display: flex;
+  align-items: center;
 `;
 
 export const ScreenTitle = styled.p<{ isScroll: boolean }>`
@@ -33,7 +38,7 @@ export const ScreenTitle = styled.p<{ isScroll: boolean }>`
 `;
 
 export const Logo = styled.img`
-  margin: 0 20px 0 40px;
+  margin: 0 20px 0 20px;
   cursor: pointer;
   width: 20px;
   height: 20px;

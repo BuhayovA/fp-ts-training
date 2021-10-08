@@ -42,7 +42,7 @@ export const ItemsWrapper = styled.div<{ expanded: boolean }>`
 
 export const IWrapper = styled.div<{ isScroll: boolean }>`
   width: 100%;
-  padding: 8px 15px;
+  padding: 8px 20px;
   display: block;
   border-bottom: 1px solid ${({ theme, isScroll }) => (isScroll ? theme.colors.blue350 : theme.colors.red250)};
 `;

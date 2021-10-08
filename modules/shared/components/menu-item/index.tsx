@@ -8,10 +8,11 @@ interface Props {
   href: string;
   label: string;
   active?: boolean;
+  color?: string;
 }
 
-const MenuItem: React.FC<Props> = ({ href, label, active = false }) => (
-  <MenuI active={active}>
+const MenuItem: React.FC<Props> = ({ href, label, active = false, color }) => (
+  <MenuI active={active} color={color}>
     <Link href={href} passHref>
       <a>{label}</a>
     </Link>
