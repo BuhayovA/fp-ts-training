@@ -63,7 +63,7 @@ const SideBar: React.FC<Props> = ({ toggleMenu, expanded }) => {
         <MenuItems isScroll={isScroll} expanded={expanded} />
       </LeftSide>
 
-      <MenuItem color={gitLinkColor} href='https://github.com/NeznaykaGM?tab=repositories' label='GitHub' />
+      <MenuItem color={gitLinkColor} href='https://github.com/NeznaykaGM/fp-ts-training' label='GitHub' />
     </Wrapper>
   );
 };
