@@ -6,12 +6,7 @@ import { menuItems } from '@md-shared/layouts/main/components/sidebar/constants'
 // components
 import { MenuItem } from '@md-shared/components/menu-item';
 // views
-import {
-  Wrapper,
-  ItemsWrapper,
-  IWrapper,
-  Scroll
-} from '@md-shared/layouts/main/components/sidebar/components/menu-items/view';
+import { Wrapper, ItemsWrapper, IWrapper } from '@md-shared/layouts/main/components/sidebar/components/menu-items/view';
 
 interface Props {
   expanded: boolean;

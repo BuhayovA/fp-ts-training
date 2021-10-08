@@ -21,6 +21,7 @@ interface Props {
 
 const SideBar: React.FC<Props> = ({ toggleMenu, expanded }) => {
   const { push } = useRouter();
+
   const [isScroll, setIsScroll] = React.useState(false);
 
   React.useEffect(() => {
