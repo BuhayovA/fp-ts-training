@@ -11,7 +11,7 @@ function createApolloClient(token?: string) {
   return new ApolloClient({
     ssrMode: isServer,
     link: new HttpLink({
-      uri: process.env.GQL_REMOTE_API_URL, // Server URL (must be absolute)
+      uri: 'https://swapi-graphql.netlify.app/.netlify/functions/index', // Server URL (must be absolute)
       credentials: 'same-origin', // Additional fetch() options like `credentials` or `headers`
       headers: {
         ...(Boolean(token) && { [AUTH_TOKEN_FIELD]: token })
