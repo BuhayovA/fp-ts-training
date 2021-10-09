@@ -29,7 +29,7 @@ const PaginationWithGQLPage = () => {
 
   const { openToast, startProgress, doneProgress } = useUIActions();
 
-  const { data, refetch, loading } = useQuery<GetPeopleResponse, GetPeopleVariables>(GET_PEOPLE, {
+  const { data, refetch, loading, error } = useQuery<GetPeopleResponse, GetPeopleVariables>(GET_PEOPLE, {
     variables: { first: ITEM_PER_PAGE },
     notifyOnNetworkStatusChange: true
   });
@@ -93,7 +93,7 @@ const PaginationWithGQLPage = () => {
   return (
     <>
       <div style={{ position: 'relative', minHeight: 500 }}>
-        <ContentLoader isLoading={loading}>
+        <ContentLoader isLoading={loading} error={error?.message}>
           {data?.allPeople.people.map((i, index) => (
             <Card key={index} name={i.name} />
           ))}
