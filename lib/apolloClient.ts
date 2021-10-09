@@ -2,7 +2,6 @@ import { useMemo } from 'react';
 import { ApolloClient, HttpLink, InMemoryCache } from '@apollo/client';
 
 export const AUTH_TOKEN_FIELD = 'Authorization';
-export const API_PREFIX = '/api/graphql';
 
 let apolloClient: ApolloClient<Record<string, unknown>>;
 
@@ -12,7 +11,7 @@ function createApolloClient(token?: string) {
   return new ApolloClient({
     ssrMode: isServer,
     link: new HttpLink({
-      uri: isServer ? process.env.GQL_REMOTE_API_URL : API_PREFIX, // Server URL (must be absolute)
+      uri: process.env.GQL_REMOTE_API_URL, // Server URL (must be absolute)
       credentials: 'same-origin', // Additional fetch() options like `credentials` or `headers`
       headers: {
         ...(Boolean(token) && { [AUTH_TOKEN_FIELD]: token })
