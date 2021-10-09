@@ -21,14 +21,14 @@ interface IIncomingProps {
 }
 
 const CodeBlock: React.FC<IIncomingProps> = ({ codeTx, label }) => (
-  <>
+  <div>
     <Subtitle>{label}</Subtitle>
     <ContentBlock>
       <SyntaxHighlighter style={dracula} language='typescript'>
         {codeTx}
       </SyntaxHighlighter>
     </ContentBlock>
-  </>
+  </div>
 );
 
 export { CodeBlock };

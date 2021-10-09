@@ -58,11 +58,11 @@ const FPTSFirstPage = () => {
   });
 
   return (
-    <div>
+    <>
       <CodeBlock label='Handling an async operation: [Input]' codeTx={input} />
       <CodeBlock label='Handling an async operation: [Solution]' codeTx={solution} />
       <CodeBlock label='Handling an async operation: [Response]' codeTx={JSON.stringify(response, null, ' ')} />
-    </div>
+    </>
   );
 };
 

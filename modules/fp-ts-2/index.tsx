@@ -45,10 +45,10 @@ const FPTSSecondPage = () => {
   getSortEntities().then((res) => console.log(res));
 
   return (
-    <div>
+    <>
       <CodeBlock label='Handling an async operation with "Do" method: [Input on JSON format]' codeTx={input} />
       <CodeBlock label='Handling an async operation with "Do" method: [Solution]' codeTx={solution} />
-    </div>
+    </>
   );
 };
 
