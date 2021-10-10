@@ -19,12 +19,7 @@ const MenuItems: React.FC<Props> = ({ expanded, isScroll }) => {
   const isRouteActive = (route: string) => {
     const isHome = route === '/' && route === pathname;
 
-    if (isHome) {
-      return true;
-    } else if (route !== '/') {
-      return pathname.replace(/[/]/g, ' ').includes(route.replace(/[/]/g, ' '));
-    }
-    return false;
+    return isHome || (route === pathname && pathname.replace(/[/]/g, ' ').includes(route.replace(/[/]/g, ' ')));
   };
 
   return (
