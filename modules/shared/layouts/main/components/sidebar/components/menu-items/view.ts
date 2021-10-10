@@ -3,16 +3,16 @@ import styled from 'styled-components';
 export const Wrapper = styled.div<{ expanded: boolean; isScroll: boolean }>`
   background-color: rgb(40, 42, 54, 0.9);
   bottom: 0;
-  left: 0;
   position: fixed;
-  right: 0;
   top: 0;
   z-index: 99;
-  transition: all 0.5s ease;
+  transition: all 0.4s ease-in-out;
 
-  height: ${({ expanded }) => (expanded ? '100%' : '0')};
+  left: ${({ expanded }) => (expanded ? 0 : 224)}px; // 224 or 210
   width: ${({ expanded }) => (expanded ? '100%' : '0')};
+  height: ${({ expanded }) => (expanded ? '100%' : '0')};
   margin-top: ${({ isScroll }) => (isScroll ? 50 : 80)}px;
+  border-radius: ${({ isScroll, expanded }) => (isScroll && expanded ? 0 : 10)}px;
 
   @media (max-width: 768px) {
     margin-top: ${({ isScroll }) => (isScroll ? 50 : 60)}px;

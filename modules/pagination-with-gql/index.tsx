@@ -62,36 +62,34 @@ const PaginationWithGQLPage = () => {
         )
       )
       .bindL('refetchRes', ({ noNullableStartCursor, noNullableEndCursor }) =>
-        pipe(
-          TE.tryCatch(
-            () =>
-              pipe(
-                direction === 'NEXT',
-                B.fold(
-                  () => {
-                    startProgress();
+        TE.tryCatch(
+          () =>
+            pipe(
+              direction === 'NEXT',
+              B.fold(
+                () => {
+                  startProgress();
 
-                    return refetch({
-                      first: undefined,
-                      after: undefined,
-                      last: ITEM_PER_PAGE,
-                      before: noNullableStartCursor
-                    });
-                  },
-                  () => {
-                    startProgress();
+                  return refetch({
+                    first: undefined,
+                    after: undefined,
+                    last: ITEM_PER_PAGE,
+                    before: noNullableStartCursor
+                  });
+                },
+                () => {
+                  startProgress();
 
-                    return refetch({
-                      last: undefined,
-                      before: undefined,
-                      first: ITEM_PER_PAGE,
-                      after: noNullableEndCursor
-                    });
-                  }
-                )
-              ).finally(doneProgress),
-            E.toError
-          )
+                  return refetch({
+                    last: undefined,
+                    before: undefined,
+                    first: ITEM_PER_PAGE,
+                    after: noNullableEndCursor
+                  });
+                }
+              )
+            ).finally(doneProgress),
+          E.toError
         )
       )
       .return(({ refetchRes }) => refetchRes)();

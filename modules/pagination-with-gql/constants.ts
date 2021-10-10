@@ -1,5 +1,5 @@
 export const solution = `
- const refetchPage = (newPageSerial: number, oldPageSerial: number, endCursor?: string, startCursor?: string) =>
+ const refetchPage = (direction: Direction, endCursor?: string, startCursor?: string) =>
     Do(TE.taskEither)
       .bind(
         'noNullableEndCursor',
@@ -16,37 +16,35 @@ export const solution = `
         )
       )
       .bindL('refetchRes', ({ noNullableStartCursor, noNullableEndCursor }) =>
-        pipe(
-          TE.tryCatch(
-            () =>
-              pipe(
-                newPageSerial > oldPageSerial,
-                B.fold(
-                  () => {
-                    startProgress();
+        TE.tryCatch(
+          () =>
+            pipe(
+              direction === 'NEXT',
+              B.fold(
+                () => {
+                  startProgress();
 
-                    return refetch({
-                      last: undefined,
-                      after: undefined,
-                      first: ITEM_PER_PAGE,
-                      before: noNullableStartCursor
-                    });
-                  },
-                  () => {
-                    startProgress();
+                  return refetch({
+                    first: undefined,
+                    after: undefined,
+                    last: ITEM_PER_PAGE,
+                    before: noNullableStartCursor
+                  });
+                },
+                () => {
+                  startProgress();
 
-                    return refetch({
-                      last: undefined,
-                      before: undefined,
-                      first: ITEM_PER_PAGE,
-                      after: noNullableEndCursor
-                    });
-                  }
-                )
-              ).finally(doneProgress),
-            E.toError
-          )
+                  return refetch({
+                    last: undefined,
+                    before: undefined,
+                    first: ITEM_PER_PAGE,
+                    after: noNullableEndCursor
+                  });
+                }
+              )
+            ).finally(doneProgress),
+          E.toError
         )
       )
-      .return(({ refetchRes }) => refetchRes)();
+      .return(({ refetchRes }) => refetchRes);
 `;

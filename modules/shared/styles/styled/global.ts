@@ -25,7 +25,6 @@ export const GlobalStyles = createGlobalStyle`
     position: absolute;
     z-index: 999;
 
-
     .bar {
       height: 3px;
       background: ${colors.red250};

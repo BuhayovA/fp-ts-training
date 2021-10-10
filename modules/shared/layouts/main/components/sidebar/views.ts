@@ -72,13 +72,13 @@ export const BurgerWrapper = styled.div<{ isActive: boolean; isScroll: boolean }
 `;
 
 export const Line1 = styled.div<{ isActive: boolean }>`
-  top: ${({ isActive }) => (isActive ? '8px' : '0px')};
+  top: ${({ isActive }) => isActive && '8px'};
   transform: ${({ isActive }) => isActive && 'rotate(135deg)'};
   position: ${({ isActive }) => isActive && 'absolute'};
 `;
 
 export const Line2 = styled.div<{ isActive: boolean }>`
-  opacity: ${({ isActive }) => isActive && '0'};
+  display: ${({ isActive }) => isActive && 'none'};
   position: ${({ isActive }) => isActive && 'absolute'};
 `;
 
