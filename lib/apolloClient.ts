@@ -1,28 +1,25 @@
 import { useMemo } from 'react';
 import { ApolloClient, HttpLink, InMemoryCache } from '@apollo/client';
 
-export const AUTH_TOKEN_FIELD = 'Authorization';
+export const API_PREFIX = '/api/graphql';
 
 let apolloClient: ApolloClient<Record<string, unknown>>;
 
-function createApolloClient(token?: string) {
+function createApolloClient() {
   const isServer = typeof window === 'undefined';
 
   return new ApolloClient({
     ssrMode: isServer,
     link: new HttpLink({
-      uri: 'https://swapi-graphql.netlify.app/.netlify/functions/index', // Server URL (must be absolute)
-      credentials: 'same-origin', // Additional fetch() options like `credentials` or `headers`
-      headers: {
-        ...(Boolean(token) && { [AUTH_TOKEN_FIELD]: token })
-      }
+      uri: isServer ? process.env.GQL_REMOTE_API_URL : API_PREFIX, // Server URL (must be absolute)
+      credentials: 'same-origin' // Additional fetch() options like `credentials` or `headers`
     }),
     cache: new InMemoryCache({})
   });
 }
 
-export function initializeApollo(initialState: Record<string, unknown> | null = null, token?: string) {
-  const _apolloClient = apolloClient ?? createApolloClient(token);
+export function initializeApollo(initialState: Record<string, unknown> | null = null) {
+  const _apolloClient = apolloClient ?? createApolloClient();
 
   // If your page has Next.js data fetching methods that use Apollo Client, the initial state
   // gets hydrated here
@@ -41,6 +38,6 @@ export function initializeApollo(initialState: Record<string, unknown> | null = 
   return _apolloClient;
 }
 
-export function useApollo(initialState: Record<string, unknown>, token?: string) {
-  return useMemo(() => initializeApollo(initialState, token), [initialState, token]);
+export function useApollo(initialState: Record<string, unknown>) {
+  return useMemo(() => initializeApollo(initialState), [initialState]);
 }

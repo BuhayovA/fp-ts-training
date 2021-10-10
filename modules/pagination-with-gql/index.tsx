@@ -1,4 +1,6 @@
 import React from 'react';
+// libs
+import styled from 'styled-components';
 // utils
 import * as O from 'fp-ts/lib/Option';
 import * as E from 'fp-ts/lib/Either';
@@ -17,41 +19,45 @@ import { solution } from '@md-modules/pagination-with-gql/constants';
 import { GetPeopleResponse, GetPeopleVariables } from '@md-shared/queries/people/types';
 // components
 import { CodeBlock } from '@md-shared/components/code-block';
-import Pagination from '@md-shared/components/pagination/main';
-import { usePagination } from '@md-shared/hooks/use-pagination';
 import Card from '@md-modules/pagination-with-gql/components/card';
 import { ContentLoader } from '@md-shared/components/content-loader';
+import PaginationWithHasMore, { Direction } from '@md-shared/components/pagination/without-page-count';
 
+// styles
+export const ListWrapper = styled.div`
+  position: relative;
+  min-height: 504px;
+`;
+
+// constants
 const ITEM_PER_PAGE = 6;
 
 const PaginationWithGQLPage = () => {
-  const [selectedPage, setSelectedPage] = React.useState(0);
-
   const { openToast, startProgress, doneProgress } = useUIActions();
+  const [currentPage, setCurrentPage] = React.useState(1);
 
   const { data, refetch, loading, error } = useQuery<GetPeopleResponse, GetPeopleVariables>(GET_PEOPLE, {
     variables: { first: ITEM_PER_PAGE },
     notifyOnNetworkStatusChange: true
   });
 
-  const { pageCount } = usePagination({
-    totalCount: data?.allPeople.totalCount || 0,
-    itemsPerPage: ITEM_PER_PAGE
-  });
+  const hasPrevPage = currentPage > 1;
+  const hasNextPage = (data?.allPeople.totalCount || 1) / ITEM_PER_PAGE > currentPage;
 
-  const onPageChange = (page: number) =>
+  // methods
+  const refetchPage = (direction: Direction, endCursor?: string, startCursor?: string) =>
     Do(TE.taskEither)
       .bind(
         'noNullableEndCursor',
         pipe(
-          O.fromNullable(data?.allPeople.pageInfo.endCursor),
+          O.fromNullable(endCursor),
           TE.fromOption(() => E.toError("Can't find next page!"))
         )
       )
       .bind(
         'noNullableStartCursor',
         pipe(
-          O.fromNullable(data?.allPeople.pageInfo.startCursor),
+          O.fromNullable(startCursor),
           TE.fromOption(() => E.toError("Can't find previously page!"))
         )
       )
@@ -60,15 +66,15 @@ const PaginationWithGQLPage = () => {
           TE.tryCatch(
             () =>
               pipe(
-                page > selectedPage,
+                direction === 'NEXT',
                 B.fold(
                   () => {
                     startProgress();
 
                     return refetch({
-                      last: undefined,
+                      first: undefined,
                       after: undefined,
-                      first: ITEM_PER_PAGE,
+                      last: ITEM_PER_PAGE,
                       before: noNullableStartCursor
                     });
                   },
@@ -90,33 +96,35 @@ const PaginationWithGQLPage = () => {
       )
       .return(({ refetchRes }) => refetchRes)();
 
+  const onPageChange = (direction: Direction) =>
+    refetchPage(direction, data?.allPeople.pageInfo.endCursor, data?.allPeople.pageInfo.startCursor).then((res) => {
+      if (E.isRight(res)) {
+        setCurrentPage((prevState) => prevState + (direction === 'NEXT' ? 1 : -1));
+      }
+
+      if (E.isLeft(res)) {
+        openToast({ type: 'ERROR', error: res.left });
+
+        // eslint-disable-next-line no-console
+        console.log(res.left);
+      }
+    });
+
   return (
     <>
-      <div style={{ position: 'relative', minHeight: 500 }}>
+      <ListWrapper>
         <ContentLoader isLoading={loading} error={error?.message}>
           {data?.allPeople.people.map((i, index) => (
             <Card key={index} name={i.name} />
           ))}
         </ContentLoader>
-      </div>
+      </ListWrapper>
 
-      <Pagination
-        page={selectedPage}
-        pageCount={pageCount}
-        onPageChange={(selectedPage) =>
-          onPageChange(selectedPage).then((res) => {
-            if (E.isRight(res)) {
-              setSelectedPage(selectedPage);
-            }
-
-            if (E.isLeft(res)) {
-              openToast({ type: 'ERROR', error: res.left });
-
-              // eslint-disable-next-line no-console
-              console.log(res.left);
-            }
-          })
-        }
+      <PaginationWithHasMore
+        page={currentPage}
+        onPageChange={onPageChange}
+        hasPrev={!loading && hasPrevPage}
+        hasNext={!loading && hasNextPage}
       />
 
       <CodeBlock label='Pagination: [Solution]' codeTx={solution} />

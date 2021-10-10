@@ -1,17 +1,17 @@
 export const solution = `
- const onPageChange = (page: number) =>
+ const refetchPage = (newPageSerial: number, oldPageSerial: number, endCursor?: string, startCursor?: string) =>
     Do(TE.taskEither)
       .bind(
         'noNullableEndCursor',
         pipe(
-          O.fromNullable(data?.allPeople.pageInfo.endCursor),
+          O.fromNullable(endCursor),
           TE.fromOption(() => E.toError("Can't find next page!"))
         )
       )
       .bind(
         'noNullableStartCursor',
         pipe(
-          O.fromNullable(data?.allPeople.pageInfo.startCursor),
+          O.fromNullable(startCursor),
           TE.fromOption(() => E.toError("Can't find previously page!"))
         )
       )
@@ -20,7 +20,7 @@ export const solution = `
           TE.tryCatch(
             () =>
               pipe(
-                page > selectedPage,
+                newPageSerial > oldPageSerial,
                 B.fold(
                   () => {
                     startProgress();
@@ -28,7 +28,7 @@ export const solution = `
                     return refetch({
                       last: undefined,
                       after: undefined,
-                      first: 'ITEM_PER_PAGE',
+                      first: ITEM_PER_PAGE,
                       before: noNullableStartCursor
                     });
                   },

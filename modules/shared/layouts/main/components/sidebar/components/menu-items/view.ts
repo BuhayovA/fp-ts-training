@@ -11,6 +11,7 @@ export const Wrapper = styled.div<{ expanded: boolean; isScroll: boolean }>`
   transition: all 0.5s ease;
 
   height: ${({ expanded }) => (expanded ? '100%' : '0')};
+  width: ${({ expanded }) => (expanded ? '100%' : '0')};
   margin-top: ${({ isScroll }) => (isScroll ? 50 : 80)}px;
 
   @media (max-width: 768px) {
@@ -36,8 +37,6 @@ export const ItemsWrapper = styled.div<{ expanded: boolean }>`
   &::-webkit-scrollbar {
     display: none;
   }
-
-  display: ${({ expanded }) => (expanded ? 'flex' : 'none')};
 `;
 
 export const IWrapper = styled.div<{ isScroll: boolean }>`
