@@ -11,7 +11,7 @@ function createApolloClient() {
   return new ApolloClient({
     ssrMode: isServer,
     link: new HttpLink({
-      uri: isServer ? process.env.GQL_REMOTE_API_URL : API_PREFIX, // Server URL (must be absolute)
+      uri: isServer ? process.env.NEXT_PUBLIC_GQL_REMOTE_API_URL : API_PREFIX, // Server URL (must be absolute)
       credentials: 'same-origin' // Additional fetch() options like `credentials` or `headers`
     }),
     cache: new InMemoryCache({})
