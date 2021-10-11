@@ -31,7 +31,13 @@ const FPTSSecondPage = () => {
           pipe(
             KEYS,
             A.reduce({} as Person, (i, key) => ({ ...i, [key]: obj[key] })),
-            R.modifyAt<Starship | string>('starship', (val) => starships.find((i) => i.starship === val) || val),
+            R.modifyAt<Starship | string>('starship', (val) =>
+              pipe(
+                starships,
+                A.findFirst((i) => i.starship === val),
+                O.getOrElse(() => val)
+              )
+            ),
             O.getOrElse<Record<keyof Person, string | Starship>>(() => obj)
           )
         ),
@@ -39,7 +45,7 @@ const FPTSSecondPage = () => {
         TE.right
       )
     )
-    .return(({ peopleWithHisStarship }) => peopleWithHisStarship);
+    .return<Record<keyof Person, string | Starship>[]>(({ peopleWithHisStarship }) => peopleWithHisStarship);
 
   // eslint-disable-next-line no-console
   getSortEntities().then((res) => console.log(res));

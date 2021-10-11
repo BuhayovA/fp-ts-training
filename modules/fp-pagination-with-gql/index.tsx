@@ -92,7 +92,7 @@ const FPPaginationWithGQLPage = () => {
           E.toError
         )
       )
-      .return(({ refetchRes }) => refetchRes)();
+      .return(({ refetchRes }) => refetchRes.data.allPeople)();
 
   const onPageChange = (direction: Direction) =>
     refetchPage(direction, data?.allPeople.pageInfo.endCursor, data?.allPeople.pageInfo.startCursor).then((res) => {

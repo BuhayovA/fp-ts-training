@@ -49,7 +49,6 @@ const FPTSFirstPage = () => {
     )
   );
 
-  // eslint-disable-next-line no-console
   getEntities().then((res) => {
     // eslint-disable-next-line no-console
     console.log('[response]: ', res);

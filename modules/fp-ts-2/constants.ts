@@ -65,7 +65,13 @@ export const solution = `
           pipe(
             KEYS,
             A.reduce({} as Person, (i, key) => ({ ...i, [key]: obj[key] })),
-            R.modifyAt<Starship | string>('starship', (val) => starships.find((i) => i.starship === val) || val),
+            R.modifyAt<Starship | string>('starship', (val) =>
+              pipe(
+                starships,
+                A.findFirst((i) => i.starship === val),
+                O.getOrElse(() => val)
+              )
+            ),
             O.getOrElse<Record<keyof Person, string | Starship>>(() => obj)
           )
         ),
@@ -73,7 +79,7 @@ export const solution = `
         TE.right
       )
     )
-    .return(({ peopleWithHisStarship }) => peopleWithHisStarship);
+    .return<Person[]>(({ peopleWithHisStarship }) => peopleWithHisStarship);
 `;
 
 export const input = `{
