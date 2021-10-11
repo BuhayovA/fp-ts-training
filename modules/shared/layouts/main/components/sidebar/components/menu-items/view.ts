@@ -8,11 +8,12 @@ export const Wrapper = styled.div<{ expanded: boolean; isScroll: boolean }>`
   z-index: 99;
   transition: all 0.4s ease-in-out;
 
-  left: ${({ expanded }) => (expanded ? 0 : 224)}px; // 224 or 210
+  left: ${({ expanded }) => (expanded ? 0 : 224)}px;
   width: ${({ expanded }) => (expanded ? '100%' : '0')};
   height: ${({ expanded }) => (expanded ? '100%' : '0')};
   margin-top: ${({ isScroll }) => (isScroll ? 50 : 80)}px;
-  border-radius: ${({ isScroll, expanded }) => (isScroll && expanded ? 0 : 10)}px;
+  /* TODO maybe br -> 10px on all sides*/
+  border-radius: ${({ isScroll, expanded }) => (isScroll && expanded ? 0 : '0 0 10px 10px')};
 
   @media (max-width: 768px) {
     margin-top: ${({ isScroll }) => (isScroll ? 50 : 60)}px;

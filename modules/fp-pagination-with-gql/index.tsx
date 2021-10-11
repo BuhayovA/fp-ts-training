@@ -14,12 +14,12 @@ import { useUIActions } from '@md-managers/use-ui-actions';
 // query
 import { GET_PEOPLE } from '@md-shared/queries/people';
 // constants
-import { solution } from '@md-modules/pagination-with-gql/constants';
+import { solution } from '@md-modules/fp-pagination-with-gql/constants';
 // types
 import { GetPeopleResponse, GetPeopleVariables } from '@md-shared/queries/people/types';
 // components
 import { CodeBlock } from '@md-shared/components/code-block';
-import Card from '@md-modules/pagination-with-gql/components/card';
+import Card from '@md-modules/fp-pagination-with-gql/components/card';
 import { ContentLoader } from '@md-shared/components/content-loader';
 import PaginationWithHasMore, { Direction } from '@md-shared/components/pagination/without-page-count';
 
@@ -32,7 +32,7 @@ export const ListWrapper = styled.div`
 // constants
 const ITEM_PER_PAGE = 6;
 
-const PaginationWithGQLPage = () => {
+const FPPaginationWithGQLPage = () => {
   const { openToast, startProgress, doneProgress } = useUIActions();
   const [currentPage, setCurrentPage] = React.useState(1);
 
@@ -130,4 +130,4 @@ const PaginationWithGQLPage = () => {
   );
 };
 
-export default PaginationWithGQLPage;
+export default FPPaginationWithGQLPage;
