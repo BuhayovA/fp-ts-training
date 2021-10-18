@@ -3,12 +3,13 @@ import React from 'react';
 import * as A from 'fp-ts/lib/Array';
 import * as O from 'fp-ts/lib/Option';
 import * as E from 'fp-ts/lib/Either';
+import * as B from 'fp-ts/lib/boolean';
 import * as R from 'fp-ts/lib/Record';
 import { pipe } from 'fp-ts/lib/pipeable';
 import { Do } from 'fp-ts-contrib/lib/Do';
 import * as TE from 'fp-ts/lib/TaskEither';
 // constants
-import { Person, solution, Starship, KEYS, input } from '@md-modules/fp-ts-2/constants';
+import { Person, solution, Starship, KEYS, input, NewPerson } from '@md-modules/fp-ts-2/constants';
 // components
 import { CodeBlock } from '@md-shared/components/code-block';
 
@@ -30,22 +31,28 @@ const FPTSSecondPage = () => {
         A.map((obj) =>
           pipe(
             KEYS,
-            A.reduce({} as Person, (i, key) => ({ ...i, [key]: obj[key] })),
-            R.modifyAt<Starship | string>('starship', (val) =>
-              pipe(
-                starships,
-                A.findFirst((i) => i.starship === val),
-                O.getOrElse(() => val)
+            A.reduce({} as NewPerson, (i, key) => ({
+              ...i,
+              [key]: pipe(
+                key === 'starship',
+                B.fold(
+                  () => obj[key],
+                  () =>
+                    pipe(
+                      starships,
+                      A.findFirst((i) => i.starship === obj[key]),
+                      O.getOrElse(() => obj[key])
+                    )
+                )
               )
-            ),
-            O.getOrElse<Record<keyof Person, string | Starship>>(() => obj)
+            }))
           )
         ),
-        (e) => e,
+
         TE.right
       )
     )
-    .return<Record<keyof Person, string | Starship>[]>(({ peopleWithHisStarship }) => peopleWithHisStarship);
+    .return<NewPerson[]>(({ peopleWithHisStarship }) => peopleWithHisStarship);
 
   // eslint-disable-next-line no-console
   getSortEntities().then((res) => console.log(res));

@@ -11,7 +11,19 @@ export interface Person {
   hair_color: string;
   skin_color: string;
   birth_year: string;
-  starship: Starship | string;
+  starship: string | Starship;
+}
+
+export interface NewPerson {
+  name: string;
+  mass: string;
+  height: string;
+  gender: string;
+  eye_color: string;
+  birth_year: string;
+  starship: Starship;
+  hair_color: string;
+  skin_color: string;
 }
 
 export interface Starship {
@@ -34,15 +46,15 @@ export interface Starship {
   max_atmosphering_speed: string;
 }
 
-export const KEYS: Array<keyof Person> = [
+export const KEYS: Array<keyof NewPerson> = [
   'name',
-  'height',
-  'eye_color',
-  'birth_year',
-  'gender',
   'mass',
+  'gender',
+  'height',
   'starship',
+  'eye_color',
   'hair_color',
+  'birth_year',
   'skin_color'
 ];
 
@@ -64,22 +76,28 @@ export const solution = `
         A.map((obj) =>
           pipe(
             KEYS,
-            A.reduce({} as Person, (i, key) => ({ ...i, [key]: obj[key] })),
-            R.modifyAt<Starship | string>('starship', (val) =>
-              pipe(
-                starships,
-                A.findFirst((i) => i.starship === val),
-                O.getOrElse(() => val)
+            A.reduce({} as NewPerson, (i, key) => ({
+              ...i,
+              [key]: pipe(
+                key === 'starship',
+                B.fold(
+                  () => obj[key],
+                  () =>
+                    pipe(
+                      starships,
+                      A.findFirst((i) => i.starship === obj[key]),
+                      O.getOrElse(() => obj[key])
+                    )
+                )
               )
-            ),
-            O.getOrElse<Record<keyof Person, string | Starship>>(() => obj)
+            }))
           )
         ),
-        (e) => e,
+
         TE.right
       )
     )
-    .return<Person[]>(({ peopleWithHisStarship }) => peopleWithHisStarship);
+    .return<NewPerson[]>(({ peopleWithHisStarship }) => peopleWithHisStarship);
 `;
 
 export const input = `{

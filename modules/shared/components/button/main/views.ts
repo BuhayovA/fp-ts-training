@@ -1,33 +1,39 @@
 import styled, { css } from 'styled-components';
+// local
+import { ButtonPresets, buttonPresets } from './presets';
 
 export const Wrapper = styled.button<{
-  isLoading: boolean;
-  disabled: boolean;
   grayBG?: boolean;
+  disabled: boolean;
+  isLoading: boolean;
+  preset?: ButtonPresets;
 }>`
+  display: inline-flex;
+  align-items: center;
+  box-shadow: 0 3px 2px 0 rgba(0, 0, 0, 0.1);
   border-radius: 10px;
-  border: none;
-  color: ${({ theme }) => theme.colors.white};
+  height: 45px;
   cursor: pointer;
-  font-size: 14px;
-  font-weight: 600;
-  max-width: 188px;
-  min-width: 112px;
-  outline: none;
-  padding: 14px 16px;
-  position: relative;
-  transition: opacity 0.2s linear;
-  background-color: ${({ theme }) => theme.colors.red250};
+  padding: 0 30px;
+
+  border: none;
+  transition: background 0.3s, transform 0.3s, box-shadow 0.3s;
+
+  color: ${({ theme }) => theme.colors.white};
 
   &:hover {
-    opacity: 0.9;
+    background: darken(#c06c84, 10%);
+    box-shadow: 0 4px 17px rgba(0, 0, 0, 0.2);
+    transform: translate3d(0, -2px, 0);
   }
 
   &:active {
-    opacity: 0.9;
+    box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.1);
+    transform: translate3d(0, 1px, 0);
   }
 
   ${({ theme }) => theme.templates.centerContent};
+  ${({ preset }) => preset && buttonPresets[preset]};
 
   ${({ disabled }) =>
     disabled &&
