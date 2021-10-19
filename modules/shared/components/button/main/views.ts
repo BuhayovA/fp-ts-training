@@ -3,7 +3,6 @@ import styled, { css } from 'styled-components';
 import { ButtonPresets, buttonPresets } from './presets';
 
 export const Wrapper = styled.button<{
-  grayBG?: boolean;
   disabled: boolean;
   isLoading: boolean;
   preset?: ButtonPresets;
@@ -38,13 +37,13 @@ export const Wrapper = styled.button<{
   ${({ disabled }) =>
     disabled &&
     css`
-      background-color: ${({ theme }) => theme.colors.gray150};
+      background-color: ${({ theme }) => theme.colors.gray200};
     `}
 
   ${({ isLoading }) =>
     isLoading &&
     css`
-      background-color: ${({ theme }) => theme.colors.gray150};
+      background-color: ${({ theme }) => theme.colors.gray200};
     `}
 `;
 

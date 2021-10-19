@@ -1,74 +1,104 @@
 import React from 'react';
 // utils
+import * as A from 'fp-ts/Array';
 import * as O from 'fp-ts/Option';
 import * as E from 'fp-ts/Either';
 import * as B from 'fp-ts/boolean';
+import * as T from 'fp-ts/Task';
 import { log } from 'fp-ts/Console';
 import { pipe } from 'fp-ts/pipeable';
 import { Do } from 'fp-ts-contrib/Do';
 import * as TE from 'fp-ts/TaskEither';
 import { retrying } from 'retry-ts/Task';
-import { capDelay, exponentialBackoff, RetryStatus } from 'retry-ts';
-// hooks
-import { useQuery } from '@apollo/client';
-import { useUIActions } from '@md-managers/use-ui-actions';
-// constants
-import { solution } from '@md-modules/fp-puller/constants';
-// query
-import { GET_PEOPLE } from '@md-shared/queries/people';
+import { flow } from 'fp-ts/lib/function';
+import { capDelay, exponentialBackoff, limitRetries, monoidRetryPolicy, RetryStatus } from 'retry-ts';
 // types
-import { GetPeopleResponse, GetPeopleVariables } from '@md-shared/queries/people/types';
+import { NewPerson, Person, RequestResponse } from '@md-modules/fp-puller/types';
 // components
 import { Button } from '@md-shared/components/button/main';
-import { CodeBlock } from '@md-shared/components/code-block';
-import { ContentLoader } from '@md-shared/components/content-loader';
-
 // views
-import { ButtonsWrapper } from '@md-modules/fp-puller/views';
-
-const ITEM_PER_PAGE = 6;
+import { ButtonsWrapper, ButtonWrapper } from '@md-modules/fp-puller/views';
 
 const FPPuller = () => {
-  const { data, refetch, loading, error } = useQuery<GetPeopleResponse, GetPeopleVariables>(GET_PEOPLE, {
-    variables: { first: ITEM_PER_PAGE },
-    notifyOnNetworkStatusChange: true
-  });
-
+  // states
   const [isActive, setIsActive] = React.useState(false);
-  const { openToast, startProgress, doneProgress } = useUIActions();
+  const [state, setState] = React.useState<Person[]>([]);
 
-  const policy = capDelay(500, exponentialBackoff(200));
+  React.useEffect(() => console.log(state), [state]);
+
+  // policy
+  const policyIsLeft = capDelay(2000, monoidRetryPolicy.concat(exponentialBackoff(200), limitRetries(5)));
+
+  const policyIsRight = capDelay(10000, exponentialBackoff(10000));
 
   // methods
-  const logDelay = (delay: number) => TE.fromIO(log(`retrying in ${delay} milliseconds`));
-
-  const refetchPage = (status: RetryStatus, endCursor?: string) =>
-    Do(TE.taskEither)
-      .bind(
-        'noNullableEndCursor',
+  const logDelayIsLeft = (status: RetryStatus) =>
+    TE.rightIO(
+      log(
         pipe(
-          O.fromNullable(endCursor),
-          TE.fromOption(() => E.toError("Can't find next page!"))
+          status.previousDelay,
+          O.map((delay) => `retrying in ${delay} milliseconds...`),
+          O.getOrElse(() => 'First attempt...')
         )
       )
-      .bindL('refetchRes', ({ noNullableEndCursor }) =>
-        TE.tryCatch(() => {
-          startProgress();
+    );
 
-          return refetch({
-            first: ITEM_PER_PAGE,
-            after: noNullableEndCursor
-          }).finally(doneProgress);
-        }, E.toError)
+  const loDelayIsRight = (status: RetryStatus) =>
+    TE.rightIO(
+      log(
+        pipe(
+          status.previousDelay,
+          O.map((delay) => `After ${delay} milliseconds...`),
+          O.getOrElse(() => 'Start...')
+        )
       )
-      .return(({ refetchRes }) => refetchRes.data.allPeople)();
+    );
+
+  const getSortEntities = Do(TE.taskEither)
+    .bind(
+      'peopleRes',
+      TE.tryCatch(() => window.fetch('https://swapi.dev/api/people'), E.toError)
+    )
+    .bindL('people', ({ peopleRes }) =>
+      TE.tryCatch<Error, RequestResponse<Person[]>>(() => peopleRes.json(), E.toError)
+    )
+    .return<RequestResponse<Person[]>>(({ people }) => {
+      setState((prevState) => (prevState ? [...prevState, ...people.results] : people.results));
+
+      return people;
+    });
+
+  // retrying
+  const get = retrying(
+    policyIsRight,
+    (status) => pipe(loDelayIsRight(status), TE.apSecond(getSortEntities)),
+    E.isRight
+  );
+
+  const result = retrying(policyIsLeft, (status) => pipe(logDelayIsLeft(status), TE.apSecond(get)), E.isLeft);
+
+  const onClickStart = () => {
+    setIsActive(true);
+
+    result().then((res) => {
+      setIsActive(false);
+
+      // eslint-disable-next-line no-console
+      console.log(res);
+    });
+  };
+
+  const onCancel = () => setIsActive(false);
 
   return (
     <ButtonsWrapper>
-      <Button disabled={isActive} isLoading={loading}>
-        Start
-      </Button>
-      <Button disabled={!isActive} preset='cancel'>
+      <ButtonWrapper>
+        <Button onClick={onClickStart} disabled={isActive || isActive} isLoading={isActive}>
+          Start
+        </Button>
+      </ButtonWrapper>
+
+      <Button onClick={onCancel} disabled={!isActive} preset='cancel'>
         Cancel
       </Button>
     </ButtonsWrapper>

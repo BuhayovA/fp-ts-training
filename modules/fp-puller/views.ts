@@ -4,7 +4,6 @@ export const ButtonsWrapper = styled.div`
   display: flex;
 `;
 
-export const ListWrapper = styled.div`
-  position: relative;
-  min-height: 504px;
+export const ButtonWrapper = styled.div`
+  margin-right: 10px;
 `;

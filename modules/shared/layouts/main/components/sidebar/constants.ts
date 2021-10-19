@@ -3,5 +3,5 @@ export const menuItems = [
   { l: 'Handling an async operation', h: '/fp-ts-1' },
   { l: 'Handling an async operation with "Do" method', h: '/fp-ts-2' },
   { l: 'Pagination', h: '/fp-pagination-with-gql' },
-  { l: 'Puller', h: '/fp-puller' }
+  { l: 'Puller with retry-ts', h: '/fp-puller' }
 ];
