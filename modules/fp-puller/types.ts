@@ -1,7 +1,7 @@
 export interface RequestResponse<A> {
   count: number;
-  next: string;
-  previous: string;
+  next: string | null;
+  previous: string | null;
   results: A;
 }
 

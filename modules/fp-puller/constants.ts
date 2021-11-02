@@ -1,116 +1,93 @@
-export const solution = `
- const { data, refetch, loading, error } = useQuery<GetPeopleResponse, GetPeopleVariables>(GET_PEOPLE, {
-    variables: { first: ITEM_PER_PAGE },
-    notifyOnNetworkStatusChange: true
-  });
+export const solutionIO = `
+// states
+const [isActive, setIsActive] = React.useState(false);
 
-  const { openToast, startProgress, doneProgress } = useUIActions();
-  const [currentPage, setCurrentPage] = React.useState(1);
-  const [isActive, setIsActive] = React.useState(false);
+// policy
+const policyIsLeft = capDelay(2000, monoidRetryPolicy.concat(exponentialBackoff(200), limitRetries(5)));
 
-  const hasPrevPage = currentPage > 1;
-  const hasNextPage = (data?.allPeople.totalCount || 1) / ITEM_PER_PAGE > currentPage;
-  const policy = capDelay(500, exponentialBackoff(200));
+const policyIsRight = capDelay(5000, exponentialBackoff(5000));
 
-  // methods
-  const refetchPage = (status: RetryStatus, direction: Direction, endCursor?: string, startCursor?: string) =>
-    Do(TE.taskEither)
-      .bind(
-        'noNullableEndCursor',
-        pipe(
-          O.fromNullable(endCursor),
-          TE.fromOption(() => E.toError("Can't find next page!"))
-        )
+// methods
+const logDelayIsLeft = (status: RetryStatus) =>
+  TE.rightIO(
+    log(
+      pipe(
+        status.previousDelay,
+        O.map((delay) => 'retrying in {delay} milliseconds...'),
+        O.getOrElse(() => 'First attempt...')
       )
-      .bind(
-        'noNullableStartCursor',
-        pipe(
-          O.fromNullable(startCursor),
-          TE.fromOption(() => E.toError("Can't find previously page!"))
-        )
+    )
+  );
+
+const loDelayIsRight = (status: RetryStatus) =>
+  TE.rightIO(
+    log(
+      pipe(
+        status.previousDelay,
+        O.map((delay) => 'After {delay} milliseconds...'),
+        O.getOrElse(() => 'Start...')
       )
-      .bindL('refetchRes', ({ noNullableStartCursor, noNullableEndCursor }) =>
+    )
+  );
+
+
+
+const getSortEntities = (item?: string | null): TE.TaskEither<Error, RequestResponse<Person[]> | 'LAST_PAGE'> =>
+  Do(TE.taskEither)
+    .bind(
+      'people',
+      pipe(
         TE.tryCatch(
-          () =>
-            pipe(
-              direction === 'NEXT',
-              B.fold(
-                () => {
-                  startProgress();
+          () => window.fetch(item || REQUEST_URL),
+          () => E.toError('Error')
+        ),
+        TE.chain((peopleRes) => TE.tryCatch<Error, RequestResponse<Person[]>>(() => peopleRes.json(), E.toError))
+      )
+    )
 
-                  return refetch({
-                    first: undefined,
-                    after: undefined,
-                    last: ITEM_PER_PAGE,
-                    before: noNullableStartCursor
-                  });
-                },
-                () => {
-                  startProgress();
-
-                  return refetch({
-                    last: undefined,
-                    before: undefined,
-                    first: ITEM_PER_PAGE,
-                    after: noNullableEndCursor
-                  });
-                }
-              )
-            ).finally(doneProgress),
-          E.toError
+    .bindL<'peopleNextPage', RequestResponse<Person[]> | 'LAST_PAGE'>('peopleNextPage', ({ people }) =>
+      pipe(
+        !!people.next,
+        B.fold(
+          () => TE.right('LAST_PAGE'),
+          () => getSortEntities(people.next)
         )
       )
-      .return(({ refetchRes }) => refetchRes.data.allPeople)();
-
-  const logDelay = (delay: number) => TE.fromIO(log(\`retrying in {delay} milliseconds\`));
-
-  const onPageChange = (direction: Direction) =>
-    retrying(
-      policy,
-      (status) =>
-        pipe(
-          status.previousDelay,
-          O.fold(
-            refetchPage(
-              status,
-              direction,
-              data?.allPeople.pageInfo.endCursor,
-              data?.allPeople.pageInfo.startCursor
-            ).then((res) => {
-              if (E.isRight(res)) {
-                setCurrentPage((prevState) => prevState + (direction === 'NEXT' ? 1 : -1));
-              }
-
-              if (E.isLeft(res)) {
-                openToast({ type: 'ERROR', error: res.left });
-
-                // eslint-disable-next-line no-console
-                console.log(res.left);
-              }
+    )
+    .bindL<'result', RequestResponse<Person[]> | 'LAST_PAGE'>('result', ({ people, peopleNextPage }) =>
+      pipe(
+        peopleNextPage === 'LAST_PAGE',
+        B.fold(
+          () =>
+            TE.right<Error, RequestResponse<Person[]>>({
+              ...people,
+              results: [...people.results, ...peopleNextPage.results]
             }),
-            (delay) =>
-              logDelay(delay).applySecond(
-                refetchPage(
-                  status,
-                  direction,
-                  data?.allPeople.pageInfo.endCursor,
-                  data?.allPeople.pageInfo.startCursor
-                ).then((res) => {
-                  if (E.isRight(res)) {
-                    setCurrentPage((prevState) => prevState + (direction === 'NEXT' ? 1 : -1));
-                  }
+          () => TE.right(peopleNextPage)
+        )
+      )
+    )
+    .return(({ result }) => result);
 
-                  if (E.isLeft(res)) {
-                    openToast({ type: 'ERROR', error: res.left });
+// retry
+const firstStep = retrying(
+  policyIsRight,
+  (status) => pipe(loDelayIsRight(status), TE.apSecond(getSortEntities())),
+  (e) => E.isRight(e) && e.right === 'LAST_PAGE'
+);
 
-                    // eslint-disable-next-line no-console
-                    console.log(res.left);
-                  }
-                })
-              )
-          )
-        ),
+const seconStep = retrying(policyIsLeft, (status) => pipe(logDelayIsLeft(status), TE.apSecond(firstStep)), E.isLeft);
 
-      E.isLeft
-    );
+const onClickStart = () => {
+  setIsActive(true);
+
+  seconStep()
+    .then((res) => {
+      // eslint-disable-next-line no-console
+      console.log('[FINAL RESPONSE]: ', res);
+    })
+    .finally(() => setIsActive(false));
+};
+
+const onCancel = () => setIsActive(false);
 `;

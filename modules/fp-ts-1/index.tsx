@@ -49,12 +49,14 @@ const FPTSFirstPage = () => {
     )
   );
 
-  getEntities().then((res) => {
-    // eslint-disable-next-line no-console
-    console.log('[response]: ', res);
+  React.useEffect(() => {
+    getEntities().then((res) => {
+      // eslint-disable-next-line no-console
+      console.log('[response]: ', res);
 
-    setResponse(res);
-  });
+      setResponse(res);
+    });
+  }, []);
 
   return (
     <>

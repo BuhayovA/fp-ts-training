@@ -4,7 +4,6 @@ import * as A from 'fp-ts/lib/Array';
 import * as O from 'fp-ts/lib/Option';
 import * as E from 'fp-ts/lib/Either';
 import * as B from 'fp-ts/lib/boolean';
-import * as R from 'fp-ts/lib/Record';
 import { pipe } from 'fp-ts/lib/pipeable';
 import { Do } from 'fp-ts-contrib/lib/Do';
 import * as TE from 'fp-ts/lib/TaskEither';

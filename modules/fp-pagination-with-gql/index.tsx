@@ -50,14 +50,16 @@ const FPPaginationWithGQLPage = () => {
       .bind(
         'noNullableEndCursor',
         pipe(
-          O.fromNullable(endCursor),
+          endCursor,
+          O.fromNullable,
           TE.fromOption(() => E.toError("Can't find next page!"))
         )
       )
       .bind(
         'noNullableStartCursor',
         pipe(
-          O.fromNullable(startCursor),
+          startCursor,
+          O.fromNullable,
           TE.fromOption(() => E.toError("Can't find previously page!"))
         )
       )
