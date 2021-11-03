@@ -2,7 +2,6 @@ import React from 'react';
 // utils
 import * as O from 'fp-ts/Option';
 import * as E from 'fp-ts/Either';
-import * as B from 'fp-ts/boolean';
 import { log } from 'fp-ts/Console';
 import { pipe } from 'fp-ts/pipeable';
 import { Do } from 'fp-ts-contrib/Do';
@@ -119,7 +118,7 @@ const FPPuller = () => {
         </Button>
       </ButtonsWrapper>
 
-      {/* <CodeBlock codeTx={solutionIO} label='[Solution]' /> */}
+      <CodeBlock codeTx={solutionIO} label='[Solution]' />
     </>
   );
 };

@@ -4,9 +4,9 @@ import FPPuller from '@md-modules/fp-puller';
 
 const FPPullerPage = () => {
   return (
-    <>
+    <MainLayout>
       <FPPuller />
-    </>
+    </MainLayout>
   );
 };
 
