@@ -1,6 +1,7 @@
 import React from 'react';
 // utils
 import * as O from 'fp-ts/Option';
+import * as A from 'fp-ts/Array';
 import * as E from 'fp-ts/Either';
 import { log } from 'fp-ts/Console';
 import { pipe } from 'fp-ts/pipeable';
@@ -8,13 +9,10 @@ import { Do } from 'fp-ts-contrib/Do';
 import * as TE from 'fp-ts/TaskEither';
 import { retrying } from 'retry-ts/Task';
 import { capDelay, exponentialBackoff, limitRetries, monoidRetryPolicy, RetryStatus } from 'retry-ts';
-// constants
-import { solutionIO } from '@md-modules/fp-puller/constants';
 // types
-import { Person, RequestResponse } from '@md-modules/fp-puller/types';
+import { Person, RequestResponse, Starship, NewPerson } from '@md-modules/fp-puller/types';
 // components
 import { Button } from '@md-shared/components/button/main';
-import { CodeBlock } from '@md-shared/components/code-block';
 // views
 import { ButtonsWrapper, ButtonWrapper } from '@md-modules/fp-puller/views';
 
@@ -54,7 +52,7 @@ const FPPuller = () => {
       )
     );
 
-  const getSortEntities = (item: string | null): TE.TaskEither<Error, RequestResponse<Person[]>> =>
+  const getSortEntities = (item: string | null): TE.TaskEither<Error, RequestResponse<NewPerson[]>> =>
     Do(TE.taskEither)
       .bind(
         'people',
@@ -67,9 +65,34 @@ const FPPuller = () => {
           TE.chain((peopleRes) => TE.tryCatch<Error, RequestResponse<Person[]>>(() => peopleRes.json(), E.toError))
         )
       )
-      .bindL('peopleNextPage', ({ people }) => (people.next ? getSortEntities(people.next) : TE.right(people)))
-      .return(({ peopleNextPage, people }) =>
-        people.next ? { ...peopleNextPage, results: [...people.results, ...peopleNextPage.results] } : peopleNextPage
+      .bindL('peopleWithStarships', ({ people }) =>
+        TE.right({
+          ...people,
+          results: pipe(
+            people.results,
+            A.map((person) => ({
+              ...person,
+              starships: pipe(
+                person.starships,
+                A.map((url) =>
+                  pipe(
+                    TE.tryCatch(() => window.fetch(url), E.toError),
+
+                    TE.chain((starshipsRes) => TE.tryCatch<Error, Starship>(() => starshipsRes.json(), E.toError))
+                  )
+                )
+              )
+            }))
+          )
+        })
+      )
+      .bindL('peopleNextPage', ({ peopleWithStarships }) =>
+        peopleWithStarships.next ? getSortEntities(peopleWithStarships.next) : TE.right(peopleWithStarships)
+      )
+      .return(({ peopleNextPage, peopleWithStarships }) =>
+        peopleWithStarships.next
+          ? { ...peopleNextPage, results: [...peopleWithStarships.results, ...peopleNextPage.results] }
+          : peopleNextPage
       );
 
   // retry
@@ -117,8 +140,6 @@ const FPPuller = () => {
           Cancel
         </Button>
       </ButtonsWrapper>
-
-      <CodeBlock codeTx={solutionIO} label='[Solution]' />
     </>
   );
 };
