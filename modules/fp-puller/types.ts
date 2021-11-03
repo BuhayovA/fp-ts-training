@@ -1,3 +1,5 @@
+import * as TE from 'fp-ts/TaskEither';
+
 export interface RequestResponse<A> {
   count: number;
   next: string | null;
@@ -38,7 +40,7 @@ export interface NewPerson {
   created: string;
   edited: string;
   species: string[];
-  starships: Starship[];
+  starships: TE.TaskEither<Error, Starship>[];
   url: string;
   vehicles: string[];
 }

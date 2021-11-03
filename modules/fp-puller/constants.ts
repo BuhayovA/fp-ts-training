@@ -1,5 +1,7 @@
 export const solutionIO = `
 // states
+const buttonRef = React.useRef(false);
+
 const [isActive, setIsActive] = React.useState(false);
 
 // policy
@@ -30,64 +32,65 @@ const loDelayIsRight = (status: RetryStatus) =>
     )
   );
 
+const getSortEntities = (item: string | null): TE.TaskEither<Error, RequestResponse<Person[]>> =>
+  pipe(
+    buttonRef.current,
 
+    B.fold(
+      () => TE.left(new Error('CANCEL')),
+      () =>
+        Do(TE.taskEither)
+          .bind(
+            'people',
+            pipe(
+              TE.tryCatch(
+                () => window.fetch(item || REQUEST_URL),
+                () => E.toError('Error')
+              ),
 
-const getSortEntities = (item?: string | null): TE.TaskEither<Error, RequestResponse<Person[]> | 'LAST_PAGE'> =>
-  Do(TE.taskEither)
-    .bind(
-      'people',
-      pipe(
-        TE.tryCatch(
-          () => window.fetch(item || REQUEST_URL),
-          () => E.toError('Error')
-        ),
-        TE.chain((peopleRes) => TE.tryCatch<Error, RequestResponse<Person[]>>(() => peopleRes.json(), E.toError))
-      )
+              TE.chain((peopleRes) =>
+                TE.tryCatch<Error, RequestResponse<Person[]>>(() => peopleRes.json(), E.toError)
+              )
+            )
+          )
+          .bindL('peopleNextPage', ({ people }) => (people.next ? getSortEntities(people.next) : TE.right(people)))
+          .return(({ peopleNextPage, people }) =>
+            people.next
+              ? { ...peopleNextPage, results: [...people.results, ...peopleNextPage.results] }
+              : peopleNextPage
+          )
     )
-
-    .bindL<'peopleNextPage', RequestResponse<Person[]> | 'LAST_PAGE'>('peopleNextPage', ({ people }) =>
-      pipe(
-        !!people.next,
-        B.fold(
-          () => TE.right('LAST_PAGE'),
-          () => getSortEntities(people.next)
-        )
-      )
-    )
-    .bindL<'result', RequestResponse<Person[]> | 'LAST_PAGE'>('result', ({ people, peopleNextPage }) =>
-      pipe(
-        peopleNextPage === 'LAST_PAGE',
-        B.fold(
-          () =>
-            TE.right<Error, RequestResponse<Person[]>>({
-              ...people,
-              results: [...people.results, ...peopleNextPage.results]
-            }),
-          () => TE.right(peopleNextPage)
-        )
-      )
-    )
-    .return(({ result }) => result);
+  );
 
 // retry
-const firstStep = retrying(
+const firstRetryStep = retrying(
   policyIsRight,
-  (status) => pipe(loDelayIsRight(status), TE.apSecond(getSortEntities())),
-  (e) => E.isRight(e) && e.right === 'LAST_PAGE'
+  (status) => pipe(loDelayIsRight(status), TE.apSecond(getSortEntities(null))),
+  (e) => E.isRight(e) && !e.right.next
 );
 
-const seconStep = retrying(policyIsLeft, (status) => pipe(logDelayIsLeft(status), TE.apSecond(firstStep)), E.isLeft);
+const seconRetryStep = retrying(
+  policyIsLeft,
+  (status) => pipe(logDelayIsLeft(status), TE.apSecond(firstRetryStep)),
+  (e) => E.isLeft(e) && e.left.message !== 'CANCEL'
+);
 
 const onClickStart = () => {
+  buttonRef.current = true;
+
   setIsActive(true);
 
-  seconStep()
-    .then((res) => {
-      // eslint-disable-next-line no-console
-      console.log('[FINAL RESPONSE]: ', res);
-    })
-    .finally(() => setIsActive(false));
+  seconRetryStep()
+    // eslint-disable-next-line no-console
+    .then((res) => console.log('[FINAL RESPONSE]: ', res))
+    .finally(() => {
+      setIsActive(false);
+    });
 };
 
-const onCancel = () => setIsActive(false);
+const onCancel = () => {
+  buttonRef.current = false;
+
+  setIsActive(false);
+};
 `;
