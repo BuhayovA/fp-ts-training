@@ -116,9 +116,7 @@ const FPPuller = () => {
     seconRetryStep()
       // eslint-disable-next-line no-console
       .then((res) => console.log('[FINAL RESPONSE]: ', res))
-      .finally(() => {
-        setIsActive(false);
-      });
+      .finally(() => setIsActive(false));
   };
 
   const onCancel = () => {
