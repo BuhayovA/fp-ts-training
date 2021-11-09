@@ -27,7 +27,7 @@ const FPPuller = () => {
   // policy
   const policyIsLeft = capDelay(2000, monoidRetryPolicy.concat(exponentialBackoff(200), limitRetries(5)));
 
-  const policyIsRight = capDelay(5000, exponentialBackoff(5000));
+  const policyIsRight = capDelay(30000, exponentialBackoff(30000));
 
   // methods
   const logDelayIsLeft = (status: RetryStatus) =>
@@ -104,7 +104,7 @@ const FPPuller = () => {
   const seconRetryStep = retrying(
     policyIsLeft,
     (status) => pipe(logDelayIsLeft(status), TE.apSecond(firstRetryStep)),
-    (e) => E.isLeft(e) && e.left.message !== 'CANCEL'
+    E.isLeft
   );
 
   const onClickStart = () => {
