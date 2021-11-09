@@ -56,10 +56,7 @@ const FPPuller = () => {
     Do(TE.taskEither)
       .bind(
         'peopleRes',
-        TE.tryCatch(
-          () => window.fetch(url || REQUEST_URL),
-          () => E.toError('Error')
-        )
+        TE.tryCatch(() => window.fetch(url || REQUEST_URL), E.toError)
       )
       .bindL('people', ({ peopleRes }) =>
         TE.tryCatch<Error, RequestResponse<Person[]>>(() => peopleRes.json(), E.toError)
