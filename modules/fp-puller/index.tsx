@@ -52,12 +52,12 @@ const FPPuller = () => {
       )
     );
 
-  const getSortEntities = (item: string | null): TE.TaskEither<Error, RequestResponse<NewPerson[]>> =>
+  const getSortEntities = (url: string | null): TE.TaskEither<Error, RequestResponse<NewPerson[]>> =>
     Do(TE.taskEither)
       .bind(
         'peopleRes',
         TE.tryCatch(
-          () => window.fetch(item || REQUEST_URL),
+          () => window.fetch(url || REQUEST_URL),
           () => E.toError('Error')
         )
       )
