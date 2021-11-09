@@ -55,15 +55,14 @@ const FPPuller = () => {
   const getSortEntities = (item: string | null): TE.TaskEither<Error, RequestResponse<NewPerson[]>> =>
     Do(TE.taskEither)
       .bind(
-        'people',
-        pipe(
-          TE.tryCatch(
-            () => window.fetch(item || REQUEST_URL),
-            () => E.toError('Error')
-          ),
-
-          TE.chain((peopleRes) => TE.tryCatch<Error, RequestResponse<Person[]>>(() => peopleRes.json(), E.toError))
+        'peopleRes',
+        TE.tryCatch(
+          () => window.fetch(item || REQUEST_URL),
+          () => E.toError('Error')
         )
+      )
+      .bindL('people', ({ peopleRes }) =>
+        TE.tryCatch<Error, RequestResponse<Person[]>>(() => peopleRes.json(), E.toError)
       )
       .bindL('peopleWithStarships', ({ people }) =>
         TE.right({

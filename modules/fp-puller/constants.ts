@@ -15,7 +15,7 @@ export const solutionIO = `
       log(
         pipe(
           status.previousDelay,
-          O.map((delay) => 'retrying in {delay} milliseconds...'),
+          O.map((delay) => \`retrying in {delay} milliseconds...\`),
           O.getOrElse(() => 'First attempt...')
         )
       )
@@ -26,7 +26,7 @@ export const solutionIO = `
       log(
         pipe(
           status.previousDelay,
-          O.map((delay) => 'After {delay} milliseconds...'),
+          O.map((delay) => \`After {delay} milliseconds...\`),
           O.getOrElse(() => 'Start...')
         )
       )
@@ -35,17 +35,15 @@ export const solutionIO = `
   const getSortEntities = (item: string | null): TE.TaskEither<Error, RequestResponse<NewPerson[]>> =>
     Do(TE.taskEither)
       .bind(
-        'people',
-        pipe(
-          TE.tryCatch(
-            () => window.fetch(item || REQUEST_URL),
-            () => E.toError('Error')
-          ),
-
-          TE.chain((peopleRes) => TE.tryCatch<Error, RequestResponse<Person[]>>(() => peopleRes.json(), E.toError))
+        'peopleRes',
+        TE.tryCatch(
+          () => window.fetch(item || REQUEST_URL),
+          () => E.toError('Error')
         )
       )
-
+      .bindL('people', ({ peopleRes }) =>
+        TE.tryCatch<Error, RequestResponse<Person[]>>(() => peopleRes.json(), E.toError)
+      )
       .bindL('peopleWithStarships', ({ people }) =>
         TE.right({
           ...people,
@@ -67,7 +65,6 @@ export const solutionIO = `
           )
         })
       )
-
       .bindL('peopleNextPage', ({ peopleWithStarships }) =>
         peopleWithStarships.next ? getSortEntities(peopleWithStarships.next) : TE.right(peopleWithStarships)
       )
@@ -98,9 +95,7 @@ export const solutionIO = `
     seconRetryStep()
       // eslint-disable-next-line no-console
       .then((res) => console.log('[FINAL RESPONSE]: ', res))
-      .finally(() => {
-        setIsActive(false);
-      });
+      .finally(() => setIsActive(false));
   };
 
   const onCancel = () => {
